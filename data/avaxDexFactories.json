@@ -1,0 +1,10 @@
+{
+  "dexes": [
+    {
+      "match": "uniswap-v3",
+      "type": "uniswapv3",
+      "factory": "0x740b1c1de25031c31ff4fc9a62f554a55cdC1baD",
+      "feeTiers": [500, 3000, 10000]
+    }
+  ]
+}

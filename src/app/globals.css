@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+:root {
+  --background: #050910;
+  --foreground: #e6f7ff;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: radial-gradient(circle at 20% 20%, #0c213b 0, transparent 30%),
+    radial-gradient(circle at 80% 10%, #112f4a 0, transparent 26%),
+    radial-gradient(circle at 70% 80%, #072a40 0, transparent 24%),
+    #050910;
+  color: var(--foreground);
+  min-height: 100vh;
+}
+
+select,
+option {
+  color: #e6f7ff;
+  background: #0a0f1b;
+}
+
+* {
+  scrollbar-color: #1fb6ff #0b1726;
+  scrollbar-width: thin;
+}
+
+.gridlines {
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.04) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 70px 70px;
+}
