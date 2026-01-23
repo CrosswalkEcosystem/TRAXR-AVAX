@@ -15,6 +15,19 @@ type TrendCache = {
 let trendCache: TrendCache | null = null;
 
 function parseTimestampFromName(name: string, mtimeMs: number) {
+  const geckoMatch = name.match(
+    /avaxPools_(?:gecko_)?(\d{4}-\d{2}-\d{2}T\d{6}\d{3}Z)/i,
+  );
+  if (geckoMatch) {
+    const raw = geckoMatch[1];
+    const iso =
+      `${raw.slice(0, 4)}-${raw.slice(5, 7)}-${raw.slice(8, 10)}` +
+      `T${raw.slice(11, 13)}:${raw.slice(13, 15)}:${raw.slice(15, 17)}.` +
+      `${raw.slice(17, 20)}Z`;
+    const date = new Date(iso);
+    if (!Number.isNaN(date.getTime())) return date.toISOString();
+  }
+
   const match = name.match(/avaxPools_(\d{8})_(\d{6})Z\.json/i);
   if (match) {
     const [yyyymmdd, hhmmss] = [match[1], match[2]];

@@ -81,23 +81,23 @@ export default function Home() {
               </div>
 
               <h1 className="text-4xl font-semibold leading-tight sm:text-5xl">
-                AVAX pools, analyzed for contract and liquidity risk.
+                AVAX pools, indexed and normalized for verifiable analytics.
               </h1>
 
               <p className="max-w-2xl text-lg text-white/70">
-                TRAXR-AVAX ingests AVAX pool fixtures and contract flags, normalizes
-                the inputs, and produces deterministic CTS-style nodes and warnings.
+                TRAXR-AVAX ingests AVAX pool data from GeckoTerminal, normalizes
+                the inputs, and exposes a clean substrate for downstream scoring.
               </p>
 
               <div className="flex flex-wrap items-center gap-3 text-sm text-white/60">
                 <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
-                  Static AVAX pools (local fixtures)
+                  GeckoTerminal snapshots (local cache)
                 </span>
                 <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
-                  Single-DEX focus (AMM v2/v3 style)
+                  Derived heuristics (best-effort)
                 </span>
                 <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
-                  Mock heuristics - alpha only
+                  Scoring engine decoupled (npm)
                 </span>
               </div>
 

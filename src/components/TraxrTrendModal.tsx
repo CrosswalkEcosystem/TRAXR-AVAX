@@ -87,9 +87,13 @@ export function TraxrTrendModal({ open, pool, onClose }: Props) {
                       USD
                     </td>
                     <td className="px-3 py-2">
-                      {typeof point.metrics.liquidityConcentrationPct === "number"
-                        ? `${point.metrics.liquidityConcentrationPct.toFixed(0)}%`
-                        : "Unknown"}
+                      {typeof point.metrics.liquidityConcentrationPct === "number" ? (
+                        `${point.metrics.liquidityConcentrationPct.toFixed(0)}%`
+                      ) : (
+                        <span title="Requires additional on-chain analysis resolved by the TRAXR scoring engine.">
+                          Unknown
+                        </span>
+                      )}
                     </td>
                   </tr>
                 ))}

@@ -5,7 +5,7 @@ import ApiTryPanel from "@/components/ApiTryPanel";
 export const metadata = {
   title: "TRAXR-AVAX API (Preview)",
   description:
-    "Preview API surface for TRAXR-AVAX read-only scoring and pool analytics.",
+    "Preview API surface for TRAXR-AVAX indexed data and decoupled scoring.",
 };
 
 export default function ApiPreviewPage() {
@@ -38,8 +38,8 @@ export default function ApiPreviewPage() {
               TRAXR-AVAX API (Preview)
             </h1>
             <p className="mt-4 text-slate-400 text-sm tracking-wide">
-              Read-only endpoints for pool scoring and analytics. Snapshot-backed
-              data, no signing, no keys, no write operations.
+              Read-only endpoints for indexed pool data and scoring outputs.
+              Snapshot-backed data, no signing, no keys, no write operations.
             </p>
 
             <section className="mt-12">
@@ -105,9 +105,9 @@ export default function ApiPreviewPage() {
             <section className="mt-10 rounded-md border border-white/10 bg-white/5 p-4">
               <h2 className="text-lg sm:text-xl font-medium">Preview Notes</h2>
               <ul className="mt-3 list-disc space-y-1 pl-5 text-slate-300">
-                <li>Snapshot-backed data from local JSON bundles.</li>
-                <li>No pagination or filtering yet.</li>
-                <li>Alerting is derived from current warning rules.</li>
+                <li>Snapshot-backed data from GeckoTerminal.</li>
+                <li>Derived heuristics are best-effort.</li>
+                <li>Unknown values are intentional until scoring resolves them.</li>
               </ul>
             </section>
 

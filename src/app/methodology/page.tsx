@@ -4,7 +4,7 @@ import BackButton from "@/components/BackButton";
 export const metadata = {
   title: "How TRAXR-AVAX Works - Methodology",
   description:
-    "Transparent overview of TRAXR-AVAX scoring, data model, and alpha constraints.",
+    "Transparent overview of TRAXR-AVAX indexing, normalization, and decoupled scoring.",
 };
 
 export default function MethodologyPage() {
@@ -43,10 +43,29 @@ export default function MethodologyPage() {
             <section className="mt-12">
               <h2 className="text-lg sm:text-xl font-medium">What TRAXR-AVAX Is</h2>
               <p className="mt-3 text-slate-300">
-                TRAXR-AVAX is a read-only, deterministic risk layer focused on
-                AVAX pools and contract posture. It evaluates liquidity behavior
-                and contract controls using transparent, placeholder heuristics.
+                TRAXR-AVAX is a foundational indexing and normalization layer for
+                AVAX DeFi data. It ingests pool data from GeckoTerminal, normalizes
+                it into a stable schema, and exposes a clean substrate for downstream
+                scoring and analysis.
               </p>
+            </section>
+
+            <section className="mt-10">
+              <h2 className="text-lg sm:text-xl font-medium">Layered Architecture</h2>
+              <ul className="mt-4 space-y-2 text-slate-300">
+                <li>
+                  <b>Layer 1 - Indexed Data</b>: source-backed pool metadata,
+                  token info, liquidity, volume, DEX attribution.
+                </li>
+                <li>
+                  <b>Layer 2 - Derived Heuristics</b>: computed, best-effort
+                  metrics like depth and volatility impact.
+                </li>
+                <li>
+                  <b>Layer 3 - Risk Signals</b>: contract risk, fee stability,
+                  liquidity concentration resolved by a separate scoring engine.
+                </li>
+              </ul>
             </section>
 
             <section className="mt-10">
@@ -56,7 +75,7 @@ export default function MethodologyPage() {
               <p className="mt-3 text-slate-300">
                 Risk in AMM environments emerges from liquidity depth, LP
                 concentration, fee dynamics, and contract control. Pool-centric
-                scoring surfaces where risk actually manifests.
+                analysis surfaces where risk actually manifests.
               </p>
             </section>
 
@@ -73,12 +92,26 @@ export default function MethodologyPage() {
 
             <section className="mt-10">
               <h2 className="text-lg sm:text-xl font-medium">
+                Scoring Engine (npm)
+              </h2>
+              <p className="mt-3 text-slate-300">
+                TRAXR-AVAX scoring is handled by a separate npm package. It
+                consumes normalized pool data and produces CTS nodes, scores,
+                and warnings without modifying the indexed facts.
+              </p>
+              <p className="mt-2 text-slate-300">
+                Package: <span className="text-slate-100">@crosswalk.pro/traxr-cts-avax</span>
+              </p>
+            </section>
+
+            <section className="mt-10">
+              <h2 className="text-lg sm:text-xl font-medium">
                 TRAXR-AVAX Score
               </h2>
               <p className="mt-3 text-slate-300">
-                Each AVAX pool receives a score (0-100), mapped to a 1-6 CTS node
-                tier for UX and integrations. Scores are relative, temporal, and
-                deterministic within the dataset.
+                Each pool receives a score (0-100) mapped to a 1-6 CTS tier.
+                Scores are relative, deterministic within the dataset, and
+                computed by the scoring engine.
               </p>
             </section>
 
@@ -103,7 +136,7 @@ export default function MethodologyPage() {
                   <span className="font-medium text-slate-200">
                     Volatility Impact
                   </span>{" "}
-                  - price sensitivity
+                  - price sensitivity proxy
                 </li>
                 <li>
                   <span className="font-medium text-slate-200">
@@ -128,12 +161,12 @@ export default function MethodologyPage() {
 
             <section className="mt-8 rounded-md border border-cyan-400/20 bg-cyan-400/5 p-4">
               <h3 className="text-sm font-medium uppercase tracking-[0.2em] text-cyan-300">
-                Alpha Scoring Notes
+                Transparency Notes
               </h3>
               <p className="mt-2 text-sm text-slate-300">
-                Several inputs are placeholders. Fee stability, concentration,
-                and dependency flags are derived from simplified heuristics
-                until live adapters are added.
+                Derived metrics are best-effort. When deeper on-chain resolution
+                is required, values are explicitly shown as "Unknown" until the
+                scoring engine resolves them.
               </p>
             </section>
 
@@ -142,8 +175,8 @@ export default function MethodologyPage() {
                 Current Alpha Data Model
               </h2>
               <p className="mt-3 text-slate-300">
-                The current alpha operates in a showcase mode. Pool metadata is
-                sourced from local JSON fixtures and refreshed manually.
+                The current alpha operates on GeckoTerminal snapshots cached in
+                JSON files and refreshed manually.
               </p>
               <p className="mt-2 text-slate-300">
                 This approach prioritizes correctness and transparency over
@@ -156,8 +189,8 @@ export default function MethodologyPage() {
                 Roadmap (Optional)
               </h2>
               <p className="mt-3 text-slate-300">
-                TRAXR-AVAX can evolve toward minimal on-chain reads and contract
-                introspection while preserving the deterministic scoring model.
+                The roadmap progresses from indexing, to on-chain resolution,
+                to expanded scoring, then cross-chain aggregation.
               </p>
             </section>
 
@@ -171,7 +204,7 @@ export default function MethodologyPage() {
             </div>
 
             <p className="mt-8 text-sm text-slate-500">
-              Know your pool. Know your risk.
+              Know your data. Know your risk.
             </p>
           </div>
         </section>

@@ -5,7 +5,7 @@ import TraxrDataModelMap from "@/components/TraxrDataModelMap";
 export const metadata = {
   title: "TRAXR-AVAX Data Model",
   description:
-    "Overview of the AVAX pool and contract data model used by TRAXR-AVAX for scoring.",
+    "Overview of the AVAX pool and contract data model used by TRAXR-AVAX for indexing and scoring.",
 };
 
 export default function DataModelPage() {
@@ -38,7 +38,7 @@ export default function DataModelPage() {
               TRAXR-AVAX Data Model
             </h1>
             <p className="mt-4 text-slate-400 text-sm tracking-wide">
-              AVAX pool and contract entities used for scoring and analysis.
+              Indexed AVAX pool entities used for normalization and scoring.
             </p>
 
             <section className="mt-12">
@@ -47,9 +47,8 @@ export default function DataModelPage() {
               </h2>
               <p className="mt-3 text-slate-300">
                 TRAXR-AVAX operates on a read-only data model derived from
-                AVAX C-Chain pool and contract inputs. All entities represent
-                deterministic snapshots or normalized transformations of those
-                snapshots.
+                AVAX C-Chain pool inputs. The model separates source-backed
+                fields from derived heuristics and external scoring signals.
               </p>
             </section>
 
@@ -61,26 +60,19 @@ export default function DataModelPage() {
                 <li>
                   <b>Pool Contract</b>
                   <div className="text-slate-400 text-sm mt-1">
-                    Pool address, fee tier, depth, and basic swap metadata.
+                    Pool address, identifiers, DEX attribution, and fee metadata.
                   </div>
                 </li>
                 <li>
-                  <b>Liquidity Distribution</b>
+                  <b>Token Metadata</b>
                   <div className="text-slate-400 text-sm mt-1">
-                    Concentration signals for LP dominance (placeholder).
-                  </div>
-                </li>
-                <li>
-                  <b>Contract Posture</b>
-                  <div className="text-slate-400 text-sm mt-1">
-                    Proxy, upgradeability, admin/owner, and timelock flags.
+                    Token name, symbol, address, and decimals from the source feed.
                   </div>
                 </li>
                 <li>
                   <b>Snapshot</b>
                   <div className="text-slate-400 text-sm mt-1">
-                    Point-in-time capture of pool state used as a deterministic
-                    scoring baseline.
+                    Point-in-time capture of liquidity and volume metrics.
                   </div>
                 </li>
               </ul>
@@ -102,21 +94,20 @@ export default function DataModelPage() {
                 Derived Metrics
               </h2>
               <p className="mt-3 text-slate-300">
-                From the core entities, TRAXR-AVAX derives normalized metrics
-                such as liquidity depth, concentration, fee stability, volatility
-                impact, and contract posture flags. These metrics are composable,
-                auditable, and reproducible.
+                From core entities, TRAXR-AVAX derives normalized heuristics
+                such as liquidity depth and volatility impact. These are marked
+                as best-effort and never presented as protocol guarantees.
               </p>
             </section>
 
             <section className="mt-10 rounded-md border border-white/10 bg-white/5 p-4">
               <h2 className="text-lg sm:text-xl font-medium">
-                Determinism & Reproducibility
+                Scoring Signals (External)
               </h2>
               <p className="mt-3 text-slate-300">
-                Given the same snapshot, the TRAXR-AVAX data model always produces
-                identical derived metrics and scores. No non-deterministic inputs
-                are introduced at any stage.
+                Advanced signals such as liquidity concentration, fee stability,
+                and governance risk are produced by the scoring engine package.
+                Unknown values are intentional until resolved by that layer.
               </p>
             </section>
 
@@ -125,10 +116,10 @@ export default function DataModelPage() {
                 Current Alpha Data Model
               </h2>
               <ul className="mt-3 list-disc pl-5 text-slate-300 space-y-1">
-                <li>Snapshot-based AVAX data ingestion</li>
-                <li>Local JSON fixtures for bootstrapping</li>
+                <li>GeckoTerminal snapshots cached in JSON</li>
                 <li>Manual refresh cycle for validation</li>
-                <li>Deterministic scoring over cached state</li>
+                <li>Deterministic normalization over cached state</li>
+                <li>Scoring handled by npm package</li>
               </ul>
             </section>
 

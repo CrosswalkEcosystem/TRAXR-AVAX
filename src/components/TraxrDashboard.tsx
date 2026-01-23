@@ -140,10 +140,10 @@ export function TraxrDashboard({ pools }: Props) {
             AVAX Pool Scanner
           </div>
           <div className="text-lg text-white">
-            Select an AVAX pool to view CTS nodes and warnings.
+            Select an AVAX pool to view indexed data and CTS outputs.
           </div>
           <div className="text-sm text-white/60">
-            List is backed by the current TRAXR-AVAX cache (alpha sample).
+            List is backed by GeckoTerminal snapshots cached by TRAXR-AVAX.
           </div>
         </div>
       </div>

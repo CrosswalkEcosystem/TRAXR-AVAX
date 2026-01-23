@@ -54,6 +54,9 @@ export function TraxrPoolCard({ pool, onCompare, onTrend }: Props) {
       ? `${m.feeStabilityPct.toFixed(0)}%`
       : "Unknown";
 
+  const unknownNote =
+    "Requires additional on-chain analysis resolved by the TRAXR scoring engine.";
+
   const explorerUrl = poolAddress
     ? `https://snowtrace.io/address/${poolAddress}`
     : null;
@@ -188,10 +191,19 @@ export function TraxrPoolCard({ pool, onCompare, onTrend }: Props) {
               </span>
             </div>
             <div className="text-sm sm:text-base font-semibold text-white">
-              {concentration}
+              {concentration === "Unknown" ? (
+                <span title={unknownNote}>Unknown</span>
+              ) : (
+                concentration
+              )}
             </div>
             <div className="mt-1 text-[10px] text-white/40">
-              Fee stability: {feeStability}
+              Fee stability:{" "}
+              {feeStability === "Unknown" ? (
+                <span title={unknownNote}>Unknown</span>
+              ) : (
+                feeStability
+              )}
             </div>
           </div>
         </div>

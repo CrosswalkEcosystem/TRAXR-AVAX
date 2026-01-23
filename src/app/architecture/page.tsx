@@ -5,7 +5,7 @@ import TraxrArchitectureFlow from "@/components/TraxrArchitectureFlow";
 export const metadata = {
   title: "TRAXR-AVAX Architecture",
   description:
-    "Architecture overview for TRAXR-AVAX: data ingestion, scoring pipeline, and alpha constraints.",
+    "Architecture overview for TRAXR-AVAX: indexing, normalization, and decoupled scoring.",
 };
 
 export default function ArchitecturePage() {
@@ -38,8 +38,7 @@ export default function ArchitecturePage() {
               TRAXR-AVAX Architecture
             </h1>
             <p className="mt-4 text-slate-400 text-sm tracking-wide">
-              AVAX data ingestion, deterministic scoring, and alpha-focused
-              infrastructure rollout.
+              Indexed AVAX data, deterministic normalization, and decoupled scoring.
             </p>
 
             <section className="mt-12">
@@ -47,9 +46,9 @@ export default function ArchitecturePage() {
                 Architectural Overview
               </h2>
               <p className="mt-3 text-slate-300">
-                TRAXR-AVAX is a read-only, deterministic analytics system focused
-                on AVAX pool and contract risk. The architecture prioritizes
-                correctness, reproducibility, and minimal scope.
+                TRAXR-AVAX is a read-only indexing layer for AVAX pools. It
+                prioritizes correctness, reproducibility, and explicit separation
+                between raw data and scoring logic.
               </p>
             </section>
 
@@ -62,34 +61,31 @@ export default function ArchitecturePage() {
 
               <ol className="mt-4 space-y-4 text-slate-300 list-decimal pl-5">
                 <li>
-                  <b>AVAX Data Ingestion</b>
+                  <b>GeckoTerminal Ingestion</b>
                   <div className="text-slate-400 text-sm mt-1">
-                    Pool fixtures, contract flags, and protocol dependencies
-                    are ingested from local JSON or minimal adapters.
+                    Pool identifiers, token metadata, liquidity, volume, and DEX attribution.
                   </div>
                 </li>
 
                 <li>
                   <b>Normalization Layer</b>
                   <div className="text-slate-400 text-sm mt-1">
-                    Raw inputs are normalized into deterministic metrics
-                    suitable for scoring.
+                    Raw inputs are mapped into deterministic AVAX pool metrics.
                   </div>
                 </li>
 
                 <li>
-                  <b>Scoring Engine</b>
+                  <b>Scoring Engine (External)</b>
                   <div className="text-slate-400 text-sm mt-1">
-                    Pools are evaluated with placeholder heuristics, producing
-                    CTS nodes and a unified score.
+                    Risk scoring runs in the npm package
+                    <span className="text-slate-100"> @crosswalk.pro/traxr-cts-avax</span>.
                   </div>
                 </li>
 
                 <li>
                   <b>Presentation & Distribution</b>
                   <div className="text-slate-400 text-sm mt-1">
-                    Scores are surfaced via dashboard UI and API endpoints for
-                    internal testing.
+                    Scores and warnings are surfaced via the UI and read-only API.
                   </div>
                 </li>
               </ol>
@@ -111,10 +107,10 @@ export default function ArchitecturePage() {
                 Current Alpha Architecture
               </h2>
               <ul className="mt-3 list-disc pl-5 text-slate-300 space-y-1">
-                <li>Static JSON fixtures (bootstrap layer)</li>
-                <li>Snapshot-based ingestion (manual refresh)</li>
-                <li>Local cache for scoring and UI validation</li>
-                <li>No real-time streaming or indexer dependency</li>
+                <li>Snapshot-based ingestion from GeckoTerminal</li>
+                <li>Local JSON cache for repeatable runs</li>
+                <li>Derived heuristics marked as best-effort</li>
+                <li>Scoring logic isolated in npm package</li>
               </ul>
             </section>
 
@@ -123,10 +119,10 @@ export default function ArchitecturePage() {
                 Roadmap (Optional)
               </h2>
               <ul className="mt-4 list-disc pl-5 text-slate-300 space-y-2">
-                <li>Minimal AVAX pool adapters</li>
-                <li>Contract introspection and admin detection</li>
+                <li>On-chain pool address resolution</li>
+                <li>Protocol-specific contract decoding</li>
                 <li>Historical snapshots for trend analysis</li>
-                <li>Public read-only API for integrations</li>
+                <li>Cross-chain expansion</li>
               </ul>
             </section>
 
@@ -135,8 +131,8 @@ export default function ArchitecturePage() {
                 Design Principles
               </h2>
               <ul className="mt-4 space-y-2 text-slate-300">
-                <li><b>Determinism over heuristics</b></li>
-                <li><b>Infrastructure before UI polish</b></li>
+                <li><b>Indexing never guesses</b></li>
+                <li><b>Scoring never rewrites facts</b></li>
                 <li><b>Minimal scope and explicit TODOs</b></li>
                 <li><b>Incremental, auditable rollout</b></li>
               </ul>

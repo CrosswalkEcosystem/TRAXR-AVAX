@@ -1,45 +1,59 @@
 # TRAXR-AVAX Architecture (Alpha)
 
-TRAXR-AVAX is a read-only, deterministic analytics system focused on AVAX pool
-and contract risk. The current alpha uses JSON fixtures and placeholder
-heuristics to validate the pipeline end-to-end.
+TRAXR-AVAX is a read-only indexing and normalization layer for AVAX DeFi data.
+Scoring and risk interpretation are intentionally decoupled into a separate
+npm package.
 
-## Principles
-- Deterministic inputs and scoring
-- Minimal scope, explicit TODOs
-- Read-only (no signing, no custody)
-- Modular separation between adapters, scoring, and presentation
+Indexing never guesses. Scoring never rewrites facts.
+
+## Layered System
+### Layer 1 - Indexed Market & Protocol Data (Live, Verifiable)
+- Source: GeckoTerminal pool data
+- Outputs: pool identifiers, token metadata, liquidity, volume, DEX attribution
+- Source-backed, reproducible, and high-confidence
+
+### Layer 2 - Derived Heuristics (Computed, Best-Effort)
+- Liquidity depth
+- Volatility impact
+- Fee tier estimates (when inferable)
+- Marked as derived and non-authoritative
+
+### Layer 3 - Risk & Structural Signals (Decoupled)
+- Liquidity concentration
+- Fee stability
+- Governance and upgradeability risk
+- Resolved by the scoring engine package, not by the indexer
 
 ## Core Pipeline
 1. **Data Ingestion**
-   - JSON fixtures for AVAX pools
-   - Optional minimal on-chain reads (future)
+   - Snapshot-based ingestion from GeckoTerminal
+   - AVAX C-Chain pools only
 
 2. **Normalization**
-   - Map raw inputs into normalized AVAX pool metrics
-   - Ensure deterministic fields across runs
+   - Deterministic mapping into AVAX pool metrics
+   - Stable identifiers and field naming
 
-3. **Scoring**
-   - Placeholder heuristics for:
-     - liquidity depth
-     - liquidity concentration
-     - fee stability
-     - volatility impact
-     - contract posture
-     - protocol dependencies
+3. **Scoring (External)**
+   - Handled by `@crosswalk.pro/traxr-cts-avax`
+   - Pure, deterministic scoring logic
 
 4. **Presentation**
    - Next.js UI for CTS nodes, breakdowns, warnings
    - Read-only API under `/api/traxr/*`
 
+## Transparency Rules
+- Unknown values are intentional and explicit
+- Derived metrics are labeled as heuristic
+- Source-backed values are never overwritten
+
 ## Alpha Constraints
 - No full indexer
 - No trading or portfolio features
 - No signing or custody
-- Single DEX abstraction (AMM v2/v3 style)
+- Limited on-chain resolution
 
 ## Future (Optional)
-- Minimal adapters for live pools
-- Contract introspection and admin detection
+- On-chain pool address resolution
+- Protocol-specific contract decoding
 - Snapshot trend history
-- Public API enhancements
+- Cross-chain aggregation

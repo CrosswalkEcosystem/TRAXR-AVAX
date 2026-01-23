@@ -14,7 +14,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "TRAXR-AVAX | Pool & Contract Risk Intelligence (Alpha)",
-  description: "TRAXR-AVAX surfaces CTS-based risk scores for AVAX pools.",
+  description:
+    "TRAXR-AVAX provides AVAX pool indexing and normalization with decoupled scoring.",
 };
 
 export default function RootLayout({

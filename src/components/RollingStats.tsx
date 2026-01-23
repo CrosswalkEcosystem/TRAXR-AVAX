@@ -99,28 +99,28 @@ export function RollingStats({
       label: "Pools",
       value: totalPools,
       description:
-        "AVAX pools included in this TRAXR-AVAX alpha snapshot (sampled subset, not the full network).",
+        "AVAX pools included in the current indexed snapshot (source-backed, not full network coverage).",
     },
     {
       key: "signals",
       label: "Signals",
       value: signals,
       description:
-        "Pools where TRAXR-AVAX observed at least one non-informational signal related to liquidity, fee behavior, or contract configuration.",
+        "Pools with at least one warning emitted by the scoring engine for this snapshot.",
     },
     {
       key: "elevated",
       label: "Elevated",
       value: elevated,
       description:
-        "Bottom quartile by TRAXR-AVAX score within this dataset. This reflects relative positioning, not an absolute risk verdict.",
+        "Bottom quartile by score within this dataset. Relative positioning only, not an absolute verdict.",
     },
     {
       key: "contracts",
       label: "Contracts",
       value: contracts,
       description:
-        "Unique pool contract addresses represented across the sampled pools.",
+        "Unique pool contract addresses resolved in the snapshot.",
     },
   ];
 
@@ -133,7 +133,7 @@ export function RollingStats({
       </div>
 
       <div className="mt-2 text-center text-[9px] sm:text-[10px] text-white/45">
-        Snapshot of ~{totalPools.toLocaleString()} pools | AVAX C-Chain | Relative metrics only
+        Snapshot of ~{totalPools.toLocaleString()} pools | AVAX C-Chain | Indexed + normalized data
       </div>
 
       <div className="mt-3 flex justify-center">

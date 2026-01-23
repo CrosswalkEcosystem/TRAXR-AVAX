@@ -1,10 +1,10 @@
 export default function TraxrArchitectureLoop() {
   const nodes = [
     { label: "AVAX C-Chain", x: 250, y: 40 },
-    { label: "Data Ingestion", x: 420, y: 140 },
+    { label: "GeckoTerminal", x: 420, y: 140 },
     { label: "Normalization", x: 340, y: 300 },
-    { label: "Scoring Engine", x: 160, y: 300 },
-    { label: "TRAXR Outputs", x: 80, y: 140 },
+    { label: "Scoring (npm)", x: 160, y: 300 },
+    { label: "API + UI", x: 80, y: 140 },
   ];
 
   return (

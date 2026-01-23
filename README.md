@@ -5,12 +5,15 @@
 ![Network](https://img.shields.io/badge/network-AVAX-black)
 ![License](https://img.shields.io/badge/license-Proprietary-red)
 
-TRAXR-AVAX is an alpha, read-only intelligence layer for AVAX pools. It ingests
-pool fixtures and contract flags, normalizes the inputs, and produces a unified
-score (0-100), CTS nodes (1-6), and human-readable warnings.
+TRAXR-AVAX is a foundational indexing and normalization layer for the Avalanche
+DeFi ecosystem. The current deployment establishes a clean, verifiable data
+substrate; higher-order analytics and scoring run in a separate, decoupled
+engine.
 
 This is not a full product rewrite. It is a minimal infrastructure experiment
 focused on correctness, clarity, and determinism.
+
+Indexing never guesses. Scoring never rewrites facts.
 
 ## Documentation
 - [ROADMAP](docs/ROADMAP.md)
@@ -29,18 +32,36 @@ npm run dev
 - `TRAXR_FALLBACK_SAMPLE=true` - load embedded sample pools.
 - `TRAXR_LOCAL_POOLS_PATH` - path to AVAX pool JSON (default: newest `data/avaxPools_*.json`, fallback `data/avaxPools.json`).
 
+## Layered Architecture
+### Layer 1 - Indexed Market & Protocol Data (Live, Verifiable)
+- Ingests AVAX AMM pools from GeckoTerminal
+- Normalizes pool identifiers, token metadata, liquidity and volume
+- Source-backed and reproducible
+
+### Layer 2 - Derived Heuristics (Computed, Best-Effort)
+- Liquidity depth, volatility impact, inferred fee tiers (where possible)
+- Marked as derived, never treated as protocol guarantees
+
+### Layer 3 - Risk & Structural Signals (Decoupled)
+- Liquidity concentration, fee stability, governance and upgradeability risk
+- Computed in a separate scoring engine, not inside the indexer
+
 ## Fixtures (Alpha)
-The alpha uses JSON fixtures as the input source. The UI will load the newest
+The alpha uses JSON snapshots as the input source. The UI will load the newest
 snapshot in `data/` if present.
 
 Run:
 ```
-node scripts/fetch_avax_pools.js
+node scripts/fetch_avax_pools_gecko.js
 ```
 
-Why JSON?
-JSON-based data is a temporary bootstrap layer. It enables rapid iteration
-without a full indexer.
+## Scoring Engine (npm)
+TRAXR-AVAX uses a dedicated scoring package:
+
+- `@crosswalk.pro/traxr-cts-avax`
+
+The app consumes normalized pool data and delegates scoring to this package.
+Unknown values are intentional until the scoring engine resolves them.
 
 ## API (read-only)
 Fuzzy matching works on mintA/mintB, token names, symbols, and addresses.
@@ -53,8 +74,8 @@ GET http://localhost:3000/api/traxr/score?mintA=AVAX&mintB=USDC
 Response includes:
 - pool ID
 - TRAXR score (0-100) and CTS nodes (1-6)
-- dimensional breakdown: depth, concentration, impact, fee stability, contract risk, dependencies
-- warnings and raw metrics used for computation
+- dimensional breakdown and warnings
+- normalized metrics used for computation
 
 Additional endpoints:
 - `GET /api/traxr/pools`
@@ -62,17 +83,9 @@ Additional endpoints:
 - `GET /api/traxr/pool-trend?poolId=...`
 - `GET /api/traxr/alerts`
 
-## Architecture (Alpha)
-- `src/lib/scoringAdapter.ts` - placeholder scorer (local heuristics).
-- `src/lib/traxrService.ts` - loads local AVAX pool data, caches and scores pools.
-- `src/app/api/traxr/*` - read-only HTTP surface for consumers.
-- `src/components/*` - dashboard UI components.
-- `scripts/fetch_avax_pools.js` - fixture generator (alpha).
-
 ## Status
-TRAXR-AVAX is currently in alpha. Public endpoints, UI components, and scoring
-integration are functional. Data adapters and on-chain reads are intentionally
-minimal.
+TRAXR-AVAX is in alpha. Indexing and normalization are live; on-chain resolution
+and protocol-specific scoring expand via the npm scoring engine over time.
 
 ## License
 UNLICENSED - proprietary module.
