@@ -303,7 +303,7 @@ function poolLabel(p: TraxrScoreResult) {
     tokenName: m.tokenAName || p.tokenAName,
     tokenSymbol: m.tokenASymbol || p.tokenASymbol,
     tokenAddress: m.tokenAAddress,
-  });
+  }) || "Unknown";
   const tokB = tokenDisplay({
     mint: m.mintB,
     tokenName: m.tokenBName || p.tokenBName,
