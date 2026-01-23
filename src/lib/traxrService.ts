@@ -149,26 +149,45 @@ startTraxrScheduler();
 /* Local cache loader                  */
 /* ---------------------------------- */
 
+function parseTimestampFromFilename(name: string) {
+  const geckoMatch = name.match(
+    /avaxPools_(?:gecko_)?(\d{4}-\d{2}-\d{2}T\d{6}\d{3}Z)/i,
+  );
+  if (geckoMatch) {
+    const raw = geckoMatch[1];
+    const iso =
+      `${raw.slice(0, 4)}-${raw.slice(5, 7)}-${raw.slice(8, 10)}` +
+      `T${raw.slice(11, 13)}:${raw.slice(13, 15)}:${raw.slice(15, 17)}.` +
+      `${raw.slice(17, 20)}Z`;
+    const ms = Date.parse(iso);
+    return Number.isNaN(ms) ? null : ms;
+  }
+
+  const match = /^avaxPools_(\d{8})_(\d{6})Z\.json$/i.exec(name);
+  if (!match) return null;
+  const date = match[1];
+  const time = match[2];
+  const iso = `${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6, 8)}T${time.slice(0, 2)}:${time.slice(2, 4)}:${time.slice(4, 6)}Z`;
+  const ms = Date.parse(iso);
+  return Number.isNaN(ms) ? null : ms;
+}
+
 function resolveLocalPoolsPath() {
   if (LOCAL_POOLS_PATH) return LOCAL_POOLS_PATH;
 
   try {
     const files = fs.readdirSync(LOCAL_POOLS_DIR);
-    const parseTimestamp = (name: string) => {
-      const match = /^avaxPools_(\d{8})_(\d{6})Z\.json$/i.exec(name);
-      if (!match) return null;
-      const date = match[1];
-      const time = match[2];
-      const iso = `${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6, 8)}T${time.slice(0, 2)}:${time.slice(2, 4)}:${time.slice(4, 6)}Z`;
-      const ms = Date.parse(iso);
-      return Number.isNaN(ms) ? null : ms;
-    };
     const candidates = files
       .filter((name) => /^avaxPools_.*\.json$/i.test(name))
       .map((name) => {
         const fullPath = path.join(LOCAL_POOLS_DIR, name);
         const stat = fs.statSync(fullPath);
-        return { name, fullPath, mtimeMs: stat.mtimeMs, stampMs: parseTimestamp(name) };
+        return {
+          name,
+          fullPath,
+          mtimeMs: stat.mtimeMs,
+          stampMs: parseTimestampFromFilename(name),
+        };
       })
       .sort((a, b) => {
         const aMs = a.stampMs ?? a.mtimeMs;
@@ -187,12 +206,25 @@ function loadLocalPools(): any[] {
   if (!fs.existsSync(resolvedPath)) return [];
 
   try {
+    const snapshotMs = parseTimestampFromFilename(
+      path.basename(resolvedPath),
+    );
+    const snapshotIso = snapshotMs
+      ? new Date(snapshotMs).toISOString()
+      : null;
     const raw = JSON.parse(fs.readFileSync(resolvedPath, "utf8"));
     if (Array.isArray(raw)) {
       console.warn(
         `[TRAXR-AVAX] Loaded ${raw.length} pools from ${resolvedPath}`,
       );
-      return raw;
+      if (!snapshotIso) return raw;
+      return raw.map((entry) => ({
+        ...entry,
+        poolUpdatedAt:
+          typeof entry.poolUpdatedAt === "string"
+            ? entry.poolUpdatedAt
+            : snapshotIso,
+      }));
     }
   } catch (e) {
     console.warn("[TRAXR-AVAX] Failed to load local pools", e);
