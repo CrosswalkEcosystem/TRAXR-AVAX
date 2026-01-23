@@ -28,7 +28,7 @@ export function TraxrDashboard({ pools }: Props) {
     if (!q) return sorted;
     return sorted.filter((p) => {
       const m: any = p.metrics || {};
-      const label = poolLabel(p).toLowerCase();
+      const label = (poolLabel(p) || "").toLowerCase();
       const fields = [
         p.poolId,
         m.mintA,

@@ -105,12 +105,9 @@ function parseFeeFromName(str) {
 }
 
 function defaultFeeByDex(dexId) {
-  const d = dexId.toLowerCase();
-
   const v2Like = [
     "pangolin",
     "traderjoe",
-    "traderjoe-v2-avalanche",
     "uniswap-v2-avalanche",
     "sushiswap_avalanche",
     "lydia_finance",
@@ -133,34 +130,26 @@ function defaultFeeByDex(dexId) {
     "canary-exchange",
   ];
 
-  if (v2Like.includes(d)) return 0.3;
-  return null; // V3 / elastic / LB → unknown without deeper resolver
+  return v2Like.includes(dexId) ? 0.3 : null;
 }
 
 function bestEffortFee(attrs, dexId, tokenA, tokenB) {
-  const direct =
+  return (
     num(attrs.fee_percentage) ??
     num(attrs.fee_percent) ??
     num(attrs.swap_fee) ??
-    null;
-
-  if (direct != null) return direct;
-
-  const fromName =
     parseFeeFromName(tokenA?.name) ??
     parseFeeFromName(tokenA?.symbol) ??
     parseFeeFromName(tokenB?.name) ??
-    parseFeeFromName(tokenB?.symbol);
-
-  if (fromName != null) return fromName;
-
-  return defaultFeeByDex(dexId);
+    parseFeeFromName(tokenB?.symbol) ??
+    defaultFeeByDex(dexId)
+  );
 }
 
 // ---------------- fetch ----------------
 
 async function fetchDexPools(dexId) {
-  let url = `${BASE_URL}/networks/${NETWORK}/dexes/${dexId}/pools`;
+  let url = `${BASE_URL}/networks/${NETWORK}/dexes/${dexId}/pools?include=base_token,quote_token`;
   const pools = [];
   const included = [];
 
@@ -221,7 +210,7 @@ function normalizePool(p, dexId, tokenMap) {
   return {
     poolRef: p.id,
     poolId: p.id,
-    poolAddress: p.id.startsWith("avax_") ? p.id.replace("avax_", "") : p.id,
+    poolAddress: p.id.replace("avax_", ""),
 
     addressSource: "geckoterminal",
     confidenceLevel: "high",
@@ -287,14 +276,13 @@ function normalizePool(p, dexId, tokenMap) {
       log("FETCH", `DEX ${dexId} pools fetched`, pools.length);
 
       for (const p of pools) {
-        const addr = p.id;
-        if (seen.has(addr)) continue;
-        seen.add(addr);
+        if (seen.has(p.id)) continue;
+        seen.add(p.id);
 
         allPools.push(normalizePool(p, dexId, tokenMap));
       }
 
-      await sleep(1000); // extra politeness between DEXes
+      await sleep(1000);
     }
 
     const outFile = path.join(

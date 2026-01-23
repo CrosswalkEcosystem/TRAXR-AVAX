@@ -1,3 +1,5 @@
+"use client";
+
 import { TraxrScoreResult } from "@/lib/types";
 import { useMemo, useState } from "react";
 import { TraxrRadarGraph } from "./TraxrRadarGraph";
