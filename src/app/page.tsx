@@ -215,7 +215,7 @@ export default function Home() {
             </a>
           </div>
           <div className="text-white/50">
-            (c) 2025 Crosswalk Ecosystem LLC. All rights reserved.
+            (c) 2026 Crosswalk Ecosystem LLC. All rights reserved.
           </div>
         </footer>
       </div>

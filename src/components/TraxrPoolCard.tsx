@@ -182,11 +182,11 @@ export function TraxrPoolCard({ pool, onCompare, onTrend }: Props) {
 
           {/* Concentration / Fee Stability */}
           <div className="rounded-2xl border border-white/10 bg-black/20 px-3 py-2">
-            <div className="flex items-center justify-between">
-              <div className="text-[11px] uppercase tracking-[0.2em] text-white/40">
+            <div className="flex flex-wrap items-center gap-1 sm:justify-between">
+              <div className="text-[10px] sm:text-[11px] uppercase tracking-[0.16em] sm:tracking-[0.2em] text-white/40">
                 Concentration
               </div>
-              <span className="text-[10px] uppercase tracking-wider text-white/30">
+              <span className="text-[10px] uppercase tracking-wider text-white/30 whitespace-nowrap">
                 Alpha
               </span>
             </div>
