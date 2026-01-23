@@ -14,7 +14,10 @@ type TrendCache = {
 
 let trendCache: TrendCache | null = null;
 
-function parseTimestampFromName(name: string, mtimeMs: number) {
+function parseTimestampFromName(
+  name: string,
+  mtimeMs: number,
+): { timestamp: string; source: "filename" | "mtime" } {
   const geckoMatch = name.match(
     /avaxPools_(?:gecko_)?(\d{4}-\d{2}-\d{2}T\d{6}\d{3}Z)/i,
   );
@@ -25,7 +28,9 @@ function parseTimestampFromName(name: string, mtimeMs: number) {
       `T${raw.slice(11, 13)}:${raw.slice(13, 15)}:${raw.slice(15, 17)}.` +
       `${raw.slice(17, 20)}Z`;
     const date = new Date(iso);
-    if (!Number.isNaN(date.getTime())) return date.toISOString();
+    if (!Number.isNaN(date.getTime())) {
+      return { timestamp: date.toISOString(), source: "filename" };
+    }
   }
 
   const match = name.match(/avaxPools_(\d{8})_(\d{6})Z\.json/i);
@@ -39,9 +44,11 @@ function parseTimestampFromName(name: string, mtimeMs: number) {
     const ss = hhmmss.slice(4, 6);
     const iso = `${yyyy}-${mm}-${dd}T${hh}:${min}:${ss}Z`;
     const date = new Date(iso);
-    if (!Number.isNaN(date.getTime())) return date.toISOString();
+    if (!Number.isNaN(date.getTime())) {
+      return { timestamp: date.toISOString(), source: "filename" };
+    }
   }
-  return new Date(mtimeMs).toISOString();
+  return { timestamp: new Date(mtimeMs).toISOString(), source: "mtime" };
 }
 
 function listSnapshotFiles() {
@@ -52,8 +59,14 @@ function listSnapshotFiles() {
       .map((name) => {
         const fullPath = path.join(LOCAL_POOLS_DIR, name);
         const stat = fs.statSync(fullPath);
-        const timestamp = parseTimestampFromName(name, stat.mtimeMs);
-        return { name, fullPath, mtimeMs: stat.mtimeMs, timestamp };
+        const parsed = parseTimestampFromName(name, stat.mtimeMs);
+        return {
+          name,
+          fullPath,
+          mtimeMs: stat.mtimeMs,
+          timestamp: parsed.timestamp,
+          timestampSource: parsed.source,
+        };
       })
       .sort((a, b) => a.timestamp.localeCompare(b.timestamp));
   } catch {
@@ -74,13 +87,22 @@ function buildTrendIndex(): TrendCache {
       const raw = JSON.parse(fs.readFileSync(file.fullPath, "utf8"));
       if (!Array.isArray(raw)) continue;
 
+      let snapshotTimestamp = file.timestamp;
+      if (file.timestampSource === "mtime") {
+        const candidate = raw.find((entry) => entry?.poolUpdatedAt)?.poolUpdatedAt;
+        const parsed = candidate ? new Date(candidate) : null;
+        if (parsed && !Number.isNaN(parsed.getTime())) {
+          snapshotTimestamp = parsed.toISOString();
+        }
+      }
+
       for (const entry of raw) {
         const normalized = normalizePool(entry);
         const { score, nodes, ctsNodes } = toScoreResult(normalized);
         const warnings = buildWarnings(normalized, nodes);
 
         const point: TraxrTrendPoint = {
-          timestamp: file.timestamp,
+          timestamp: snapshotTimestamp,
           score,
           ctsNodes,
           nodes,
