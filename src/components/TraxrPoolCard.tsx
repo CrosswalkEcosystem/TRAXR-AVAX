@@ -42,7 +42,7 @@ export function TraxrPoolCard({ pool, onCompare, onTrend }: Props) {
   const vol24Usd =
     typeof m.volume24hUsd === "number" ? m.volume24hUsd : 0;
   const feePct = typeof m.feePct === "number" ? m.feePct : 0;
-  const feeDisplay = `${(feePct * 100).toFixed(2)}%`;
+  const feeDisplay = `${feePct.toFixed(2)}%`;
 
   const concentration =
     typeof m.liquidityConcentrationPct === "number"

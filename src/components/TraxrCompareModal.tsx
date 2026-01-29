@@ -96,9 +96,8 @@ const formatPct = (value: number) => {
 };
 
 const formatFeePct = (value: number) => {
-  const pct = value * 100;
-  if (pct > 0 && pct < 0.01) return "<0.01%";
-  return `${pct.toFixed(4)}%`;
+  if (value > 0 && value < 0.01) return "<0.01%";
+  return `${value.toFixed(4)}%`;
 };
 
 function formatMetricValue(key: MetricKey, value: number) {
