@@ -169,7 +169,7 @@ async function fetchDexPools(dexId) {
     included.push(...(json.included || []));
     url = json.links?.next || null;
 
-    await sleep(250);
+    await sleep(450);
   }
 
   return { pools, included };
