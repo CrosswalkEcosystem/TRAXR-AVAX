@@ -282,7 +282,7 @@ function normalizePool(p, dexId, tokenMap) {
         allPools.push(normalizePool(p, dexId, tokenMap));
       }
 
-      await sleep(1000);
+      await sleep(10000);
     }
 
     const outFile = path.join(
