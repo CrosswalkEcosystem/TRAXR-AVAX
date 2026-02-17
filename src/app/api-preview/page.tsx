@@ -124,7 +124,7 @@ export default function ApiPreviewPage() {
         <footer className="mt-10 flex flex-col gap-2 border-t border-white/10 pt-6 text-sm text-white/60 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap items-center gap-3">
             <a
-              href="https://github.com/CrosswalkEcosystem/TRAXR"
+              href="https://github.com/CrosswalkEcosystem/TRAXR-AVAX"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-white"
