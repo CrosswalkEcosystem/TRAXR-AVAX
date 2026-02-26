@@ -44,3 +44,8 @@ next-env.d.ts
 .env*.local
 # npm auth (local only)
 .npmrc
+data/avaxPools_rpc_pangolin_test_2026-02-26T222419064Z.json
+data/avaxPools_rpc_pangolin_test_2026-02-26T222735289Z.json
+data/avaxPools_rpc_pangolin_test_2026-02-26T222827416Z.json
+scripts/fetch_avax_pools_rpc_pangolin_test.js
+scripts/test_avax_rpc_vs_gecko.js
