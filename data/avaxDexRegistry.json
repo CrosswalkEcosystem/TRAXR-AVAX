@@ -1,0 +1,170 @@
+{
+  "network": "avax",
+  "dexes": [
+    {
+      "dexId": "pangolin"
+    },
+    {
+      "dexId": "traderjoe"
+    },
+    {
+      "dexId": "lydia_finance"
+    },
+    {
+      "dexId": "thorus"
+    },
+    {
+      "dexId": "firebird_avax"
+    },
+    {
+      "dexId": "elk_finance_avax"
+    },
+    {
+      "dexId": "yetiswap"
+    },
+    {
+      "dexId": "sushiswap_avalanche"
+    },
+    {
+      "dexId": "hakuswap"
+    },
+    {
+      "dexId": "radioshack_avalanche"
+    },
+    {
+      "dexId": "hurricaneswap"
+    },
+    {
+      "dexId": "apexswap"
+    },
+    {
+      "dexId": "swapsicle"
+    },
+    {
+      "dexId": "fraxswap_avalanche"
+    },
+    {
+      "dexId": "spice_trade_avalanche"
+    },
+    {
+      "dexId": "kyberswap_elastic_avalanche"
+    },
+    {
+      "dexId": "baguette"
+    },
+    {
+      "dexId": "soulswap_avalanche"
+    },
+    {
+      "dexId": "kyberswap_classic_avalanche"
+    },
+    {
+      "dexId": "traderjoe-v2-avalanche"
+    },
+    {
+      "dexId": "onavax"
+    },
+    {
+      "dexId": "curve_avalanche"
+    },
+    {
+      "dexId": "vapordex"
+    },
+    {
+      "dexId": "hunnyswap"
+    },
+    {
+      "dexId": "flair-dex"
+    },
+    {
+      "dexId": "glacier"
+    },
+    {
+      "dexId": "solisnek"
+    },
+    {
+      "dexId": "traderjoe-v2-1-avalanche"
+    },
+    {
+      "dexId": "sushiswap-v3-avalanche"
+    },
+    {
+      "dexId": "uniswap-v3-avalanche"
+    },
+    {
+      "dexId": "balancer-v2-avalanche"
+    },
+    {
+      "dexId": "dex-on-crypto-avalanche"
+    },
+    {
+      "dexId": "canary-exchange"
+    },
+    {
+      "dexId": "pharaoh-exchange"
+    },
+    {
+      "dexId": "vapordex-v2"
+    },
+    {
+      "dexId": "antfarm-avalanche"
+    },
+    {
+      "dexId": "archly-avalanche"
+    },
+    {
+      "dexId": "uniswap-v2-avalanche"
+    },
+    {
+      "dexId": "pharaoh-exchange-v1"
+    },
+    {
+      "dexId": "pyreswap-avalanche"
+    },
+    {
+      "dexId": "traderjoe-v2-2-avalanche"
+    },
+    {
+      "dexId": "fwx"
+    },
+    {
+      "dexId": "uniswap-v4-avalanche"
+    },
+    {
+      "dexId": "aquaspace"
+    },
+    {
+      "dexId": "arena-dex"
+    },
+    {
+      "dexId": "pangolin-v3"
+    },
+    {
+      "dexId": "blackhole-v2"
+    },
+    {
+      "dexId": "blackhole-v3"
+    },
+    {
+      "dexId": "omni-exchange-v2-avalanche"
+    },
+    {
+      "dexId": "omni-exchange-v3-avalanche"
+    },
+    {
+      "dexId": "balancer-v3-avalanche"
+    },
+    {
+      "dexId": "omni-exchange-v4-avalanche"
+    },
+    {
+      "dexId": "pharaoh-exchange-v3"
+    },
+    {
+      "dexId": "pharaoh-exchange-legacy"
+    },
+    {
+      "dexId": "aquaspace-v3"
+    }
+  ]
+}

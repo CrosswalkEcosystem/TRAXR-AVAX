@@ -19,7 +19,7 @@ function parseTimestampFromName(
   mtimeMs: number,
 ): { timestamp: string; source: "filename" | "mtime" } {
   const geckoMatch = name.match(
-    /avaxPools_(?:gecko_)?(\d{4}-\d{2}-\d{2}T\d{6}\d{3}Z)/i,
+    /avaxPools_(?:(?:gecko|gecko_selection|avaxrpc)_)?(\d{4}-\d{2}-\d{2}T\d{6}\d{3}Z)/i,
   );
   if (geckoMatch) {
     const raw = geckoMatch[1];
@@ -54,7 +54,7 @@ function parseTimestampFromName(
 function listSnapshotFiles() {
   try {
     const files = fs.readdirSync(LOCAL_POOLS_DIR);
-    return files
+    const allSnapshots = files
       .filter((name) => /^avaxPools_.*\.json$/i.test(name))
       .map((name) => {
         const fullPath = path.join(LOCAL_POOLS_DIR, name);
@@ -67,7 +67,13 @@ function listSnapshotFiles() {
           timestamp: parsed.timestamp,
           timestampSource: parsed.source,
         };
-      })
+      });
+
+    const nativeSnapshots = allSnapshots.filter((item) =>
+      /^avaxPools_avaxrpc_.*\.json$/i.test(item.name),
+    );
+    const selected = nativeSnapshots.length ? nativeSnapshots : allSnapshots;
+    return selected
       .sort((a, b) => a.timestamp.localeCompare(b.timestamp));
   } catch {
     return [];

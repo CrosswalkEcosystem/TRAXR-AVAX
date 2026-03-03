@@ -51,3 +51,6 @@ scripts/fetch_avax_pools_rpc_pangolin_test.js
 scripts/test_avax_rpc_vs_gecko.js
 data/avaxPools_rpc_pangolin_test_2026-02-26T224259610Z.json
 data/avaxPools_rpc_pangolin_test_2026-02-26T223000624Z.json
+scripts/legacy/
+data/test/
+data/avaxDexCoverage_*.json

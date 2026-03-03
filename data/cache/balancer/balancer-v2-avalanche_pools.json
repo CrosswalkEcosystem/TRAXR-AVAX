@@ -1,0 +1,17 @@
+{
+  "dexId": "balancer-v2-avalanche",
+  "latestBlockAtRun": 79448817,
+  "nextToBlock": 74436137,
+  "fullyIndexed": false,
+  "pools": [
+    {
+      "dexId": "balancer-v2-avalanche",
+      "protocolType": "balancer",
+      "poolAddress": "0x14843971c9918b5f762c309ac21bc2554981ec9d",
+      "poolId": "0x14843971c9918b5f762c309ac21bc2554981ec9d000100000000000000000067",
+      "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "feePct": null,
+      "eventBlock": 74697478
+    }
+  ]
+}

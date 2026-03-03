@@ -1,0 +1,30 @@
+{
+  "defaults": {
+    "contractAdmin": "unknown",
+    "contractOwner": "unknown",
+    "contractHasTimelock": false,
+    "feePct": 0,
+    "feeStabilityPct": 35,
+    "tx7d": 0,
+    "volume7dUsd": 0
+  },
+  "protocolDefaults": {
+    "uniswap_v2": {
+      "feeStabilityPct": 90,
+      "protocolDependencies": ["factory", "pair", "router"]
+    },
+    "uniswap_v3": {
+      "feeStabilityPct": 95,
+      "protocolDependencies": ["factory", "pool", "positions_nft"]
+    },
+    "joe_lb": {
+      "feeStabilityPct": 75,
+      "protocolDependencies": ["lb_factory", "lb_pair", "router"]
+    },
+    "balancer": {
+      "feeStabilityPct": 85,
+      "protocolDependencies": ["vault", "pool", "router"]
+    }
+  },
+  "timelockAddresses": []
+}

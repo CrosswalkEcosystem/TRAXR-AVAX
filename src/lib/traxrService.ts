@@ -151,7 +151,7 @@ startTraxrScheduler();
 
 function parseTimestampFromFilename(name: string) {
   const geckoMatch = name.match(
-    /avaxPools_(?:gecko_)?(\d{4}-\d{2}-\d{2}T\d{6}\d{3}Z)/i,
+    /avaxPools_(?:(?:gecko|gecko_selection|avaxrpc)_)?(\d{4}-\d{2}-\d{2}T\d{6}\d{3}Z)/i,
   );
   if (geckoMatch) {
     const raw = geckoMatch[1];
@@ -177,7 +177,7 @@ function resolveLocalPoolsPath() {
 
   try {
     const files = fs.readdirSync(LOCAL_POOLS_DIR);
-    const candidates = files
+    const allCandidates = files
       .filter((name) => /^avaxPools_.*\.json$/i.test(name))
       .map((name) => {
         const fullPath = path.join(LOCAL_POOLS_DIR, name);
@@ -188,7 +188,12 @@ function resolveLocalPoolsPath() {
           mtimeMs: stat.mtimeMs,
           stampMs: parseTimestampFromFilename(name),
         };
-      })
+      });
+
+    const nativeCandidates = allCandidates.filter((c) =>
+      /^avaxPools_avaxrpc_.*\.json$/i.test(c.name),
+    );
+    const candidates = (nativeCandidates.length ? nativeCandidates : allCandidates)
       .sort((a, b) => {
         const aMs = a.stampMs ?? a.mtimeMs;
         const bMs = b.stampMs ?? b.mtimeMs;

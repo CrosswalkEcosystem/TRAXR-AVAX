@@ -85,13 +85,13 @@ export default function Home() {
               </h1>
 
               <p className="max-w-2xl text-lg text-white/70">
-                TRAXR-AVAX ingests AVAX pool data from GeckoTerminal, normalizes
-                the inputs, and exposes a clean substrate for downstream scoring.
+                TRAXR-AVAX ingests AVAX pool data from Avalanche-native RPC,
+                normalizes the inputs, and exposes a clean substrate for downstream scoring.
               </p>
 
               <div className="flex flex-wrap items-center gap-3 text-sm text-white/60">
                 <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
-                  GeckoTerminal snapshots (local cache)
+                  Avalanche RPC snapshots (local cache)
                 </span>
                 <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">
                   Derived heuristics (best-effort)

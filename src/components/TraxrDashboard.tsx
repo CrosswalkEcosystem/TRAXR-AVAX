@@ -126,7 +126,7 @@ export function TraxrDashboard({ pools }: Props) {
         <div className="h-10 w-10 animate-spin rounded-full border-2 border-cyan-300/70 border-t-transparent" />
         <div className="text-sm text-white/80">Loading TRAXR-AVAX pools...</div>
         <div className="text-xs text-white/50">
-          Run `node scripts/fetch_avax_pools.js` to refresh local cache.
+          Run `node scripts/fetch_avax_pools_avalanche.js` to refresh local cache.
         </div>
       </div>
     );
@@ -143,7 +143,7 @@ export function TraxrDashboard({ pools }: Props) {
             Select an AVAX pool to view indexed data and CTS outputs.
           </div>
           <div className="text-sm text-white/60">
-            List is backed by GeckoTerminal snapshots cached by TRAXR-AVAX.
+            List is backed by Avalanche-native RPC snapshots cached by TRAXR-AVAX.
           </div>
         </div>
       </div>

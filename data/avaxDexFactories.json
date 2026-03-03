@@ -1,10 +1,540 @@
 {
-  "dexes": [
+  "network": "avax",
+  "adapters": {
+    "uniswap_v2": {
+      "discovery": "factory_all_pairs",
+      "poolState": "getReserves",
+      "swapEvent": "Swap(address,uint256,uint256,uint256,uint256,address)"
+    },
+    "uniswap_v3": {
+      "discovery": "factory_pool_created_logs",
+      "poolState": "token_balances",
+      "swapEvent": "Swap(address,address,int256,int256,uint160,uint128,int24)"
+    },
+    "joe_lb": {
+      "discovery": "factory_lb_pair_created_logs",
+      "poolState": "lb_bin_liquidity",
+      "swapEvent": "Swap(address,address,uint24,bytes32,bytes32,uint256,uint256)",
+      "status": "planned"
+    },
+    "curve": {
+      "discovery": "registry_or_factory_logs",
+      "poolState": "curve_virtual_price_balances",
+      "swapEvent": "TokenExchange/TokenExchangeUnderlying",
+      "status": "planned"
+    },
+    "balancer": {
+      "discovery": "vault_pool_registered_logs",
+      "poolState": "vault_pool_tokens",
+      "swapEvent": "Swap(bytes32,address,address,uint256,uint256)",
+      "status": "planned"
+    },
+    "uniswap_v4": {
+      "discovery": "pool_manager_initialize_logs",
+      "poolState": "positions_and_slot_state",
+      "swapEvent": "Swap(...)",
+      "status": "planned"
+    }
+  },
+  "dexFactories": [
     {
-      "match": "uniswap-v3",
-      "type": "uniswapv3",
-      "factory": "0x740b1c1de25031c31ff4fc9a62f554a55cdC1baD",
-      "feeTiers": [500, 3000, 10000]
+      "dexId": "pangolin",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": "0xefa94de7a4656d787667c749f7e1223d71e9fd88",
+      "deployBlock": 4317374,
+      "defaultFeePct": 0.3,
+      "enabled": true
+    },
+    {
+      "dexId": "traderjoe",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": "0x9ad6c38be94206ca50bb0d90783181662f0cfa10",
+      "deployBlock": 4317374,
+      "defaultFeePct": 0.3,
+      "enabled": true
+    },
+    {
+      "dexId": "lydia_finance",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": "0xe0C1bb6DF4851feEEdc3E14Bd509FEAF428f7655",
+      "deployBlock": 0,
+      "defaultFeePct": 0.3,
+      "enabled": true
+    },
+    {
+      "dexId": "thorus",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": "0xa98ea6356A316b44Bf710D5f9b6b4eA0081409Ef",
+      "deployBlock": 0,
+      "defaultFeePct": 0.3,
+      "enabled": true
+    },
+    {
+      "dexId": "firebird_avax",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "elk_finance_avax",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": "0x091d35d7F63487909C863001ddCA481c6De47091",
+      "deployBlock": 0,
+      "defaultFeePct": 0.3,
+      "enabled": true
+    },
+    {
+      "dexId": "yetiswap",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": "0x58C8CD291Fa36130119E6dEb9E520fbb6AcA1c3a",
+      "deployBlock": 0,
+      "defaultFeePct": 0.3,
+      "enabled": true
+    },
+    {
+      "dexId": "sushiswap_avalanche",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": "0xc35dadb65012ec5796536bd9864ed8773abc74c4",
+      "deployBlock": 4317374,
+      "defaultFeePct": 0.3,
+      "enabled": true
+    },
+    {
+      "dexId": "hakuswap",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "radioshack_avalanche",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "hurricaneswap",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "apexswap",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "swapsicle",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "fraxswap_avalanche",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "spice_trade_avalanche",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "kyberswap_elastic_avalanche",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "baguette",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "soulswap_avalanche",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "kyberswap_classic_avalanche",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "traderjoe-v2-avalanche",
+      "adapter": "joe_lb",
+      "protocolType": "joe_lb",
+      "factoryAddress": "0x6e77932da77dbded83bd7836e478b462478bde77",
+      "deployBlock": 0,
+      "defaultFeePct": null,
+      "enabled": false,
+      "notes": "Disabled: factory ABI/address needs verification for joe_lb adapter"
+    },
+    {
+      "dexId": "onavax",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "curve_avalanche",
+      "adapter": "curve",
+      "protocolType": "curve",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": null,
+      "enabled": false
+    },
+    {
+      "dexId": "vapordex",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "hunnyswap",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "flair-dex",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "glacier",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "solisnek",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "traderjoe-v2-1-avalanche",
+      "adapter": "joe_lb",
+      "protocolType": "joe_lb",
+      "factoryAddress": "0x8e42f2f4101563bf679975178e880fd87d3efd4e",
+      "deployBlock": 0,
+      "defaultFeePct": null,
+      "enabled": true,
+      "notes": "LFJ Avalanche deployment"
+    },
+    {
+      "dexId": "sushiswap-v3-avalanche",
+      "adapter": "uniswap_v3",
+      "protocolType": "uniswap_v3",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": null,
+      "enabled": false
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "adapter": "uniswap_v3",
+      "protocolType": "uniswap_v3",
+      "factoryAddress": "0x740b1c1de25031c31ff4fc9a62f554a55cdc1bad",
+      "deployBlock": 17800000,
+      "defaultFeePct": null,
+      "enabled": true
+    },
+    {
+      "dexId": "balancer-v2-avalanche",
+      "adapter": "balancer",
+      "protocolType": "balancer",
+      "factoryAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "deployBlock": 0,
+      "defaultFeePct": null,
+      "enabled": true,
+      "notes": "Balancer V2 Vault on Avalanche"
+    },
+    {
+      "dexId": "dex-on-crypto-avalanche",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "canary-exchange",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "pharaoh-exchange",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "vapordex-v2",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "antfarm-avalanche",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "archly-avalanche",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "uniswap-v2-avalanche",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "pharaoh-exchange-v1",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "pyreswap-avalanche",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "traderjoe-v2-2-avalanche",
+      "adapter": "joe_lb",
+      "protocolType": "joe_lb",
+      "factoryAddress": "0xb4315e873dbcf96ffd0acd8ea43f689d8c20fb30",
+      "deployBlock": 0,
+      "defaultFeePct": null,
+      "enabled": false,
+      "notes": "Disabled: factory ABI/address needs verification for joe_lb adapter"
+    },
+    {
+      "dexId": "fwx",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "uniswap-v4-avalanche",
+      "adapter": "uniswap_v4",
+      "protocolType": "uniswap_v4",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": null,
+      "enabled": false
+    },
+    {
+      "dexId": "aquaspace",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "arena-dex",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": "0xF16784dcAf838a3e16bEF7711a62D12413c39BD1",
+      "deployBlock": 0,
+      "defaultFeePct": 0.3,
+      "enabled": true
+    },
+    {
+      "dexId": "pangolin-v3",
+      "adapter": "uniswap_v3",
+      "protocolType": "uniswap_v3",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": null,
+      "enabled": false
+    },
+    {
+      "dexId": "blackhole-v2",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "blackhole-v3",
+      "adapter": "uniswap_v3",
+      "protocolType": "uniswap_v3",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": null,
+      "enabled": false
+    },
+    {
+      "dexId": "omni-exchange-v2-avalanche",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "omni-exchange-v3-avalanche",
+      "adapter": "uniswap_v3",
+      "protocolType": "uniswap_v3",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": null,
+      "enabled": false
+    },
+    {
+      "dexId": "balancer-v3-avalanche",
+      "adapter": "uniswap_v3",
+      "protocolType": "uniswap_v3",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": null,
+      "enabled": false
+    },
+    {
+      "dexId": "omni-exchange-v4-avalanche",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "pharaoh-exchange-v3",
+      "adapter": "uniswap_v3",
+      "protocolType": "uniswap_v3",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": null,
+      "enabled": false
+    },
+    {
+      "dexId": "pharaoh-exchange-legacy",
+      "adapter": "uniswap_v2",
+      "protocolType": "uniswap_v2",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": 0.3,
+      "enabled": false
+    },
+    {
+      "dexId": "aquaspace-v3",
+      "adapter": "uniswap_v3",
+      "protocolType": "uniswap_v3",
+      "factoryAddress": null,
+      "deployBlock": null,
+      "defaultFeePct": null,
+      "enabled": false
     }
   ]
 }
