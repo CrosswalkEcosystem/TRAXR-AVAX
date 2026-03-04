@@ -81,7 +81,7 @@ export function TraxrTrustMap({ pools, selected, onSelect }: Props) {
                 Updated {hero.updatedAt ? new Date(hero.updatedAt).toLocaleString() : "n/a"}
               </div>
               <div className="mt-2 text-[11px] text-white/60 leading-relaxed">
-                Legend: center number = TRAXR score; vertices = CTS nodes (depth, concentration, impact, fee stability, contract, dependencies).
+                Legend: center number = TRAXR score; vertices = CTS nodes (liquidity depth, trading activity, volatility impact, fee stability, contract risk, dependencies).
               </div>
             </div>
             <div className="flex-1">

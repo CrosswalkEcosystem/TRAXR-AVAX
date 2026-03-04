@@ -229,6 +229,70 @@ function metricWinner(left: number | null, right: number | null, direction: Dire
   return left > right ? "left" : "right";
 }
 
+function formatSourceSummary(points: TraxrTrendPoint[]) {
+  const counts = new Map<string, number>();
+  for (const point of points) {
+    const source = point.metrics?.dataSource || "unknown";
+    counts.set(source, (counts.get(source) ?? 0) + 1);
+  }
+  const ordered = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+  if (!ordered.length) return "n/a";
+  return ordered.map(([name, count]) => `${name} ${count}`).join(" | ");
+}
+
+type SourceBand = {
+  sourceKey: "avalanche-rpc" | "geckoterminal" | "other";
+  startIdx: number;
+  endIdx: number;
+};
+
+function sourceKeyFromTrendPoint(
+  point: TraxrTrendPoint | undefined,
+): SourceBand["sourceKey"] {
+  const source = String(point?.metrics?.dataSource || "").toLowerCase();
+  if (source === "avalanche-rpc") return "avalanche-rpc";
+  if (source.includes("geckoterminal")) return "geckoterminal";
+  return "other";
+}
+
+function resolveCompareSourceKey(
+  left: TraxrTrendPoint | undefined,
+  right: TraxrTrendPoint | undefined,
+): SourceBand["sourceKey"] {
+  const lk = sourceKeyFromTrendPoint(left);
+  const rk = sourceKeyFromTrendPoint(right);
+  if (lk === "avalanche-rpc" || rk === "avalanche-rpc") return "avalanche-rpc";
+  if (lk === "geckoterminal" || rk === "geckoterminal") return "geckoterminal";
+  return "other";
+}
+
+function buildSourceBands(
+  timeline: string[],
+  leftByTs: Map<string, TraxrTrendPoint>,
+  rightByTs: Map<string, TraxrTrendPoint>,
+): SourceBand[] {
+  if (!timeline.length) return [];
+  const bands: SourceBand[] = [];
+  let current = resolveCompareSourceKey(
+    leftByTs.get(timeline[0]),
+    rightByTs.get(timeline[0]),
+  );
+  let startIdx = 0;
+
+  for (let i = 1; i < timeline.length; i += 1) {
+    const next = resolveCompareSourceKey(
+      leftByTs.get(timeline[i]),
+      rightByTs.get(timeline[i]),
+    );
+    if (next === current) continue;
+    bands.push({ sourceKey: current, startIdx, endIdx: i - 1 });
+    current = next;
+    startIdx = i;
+  }
+  bands.push({ sourceKey: current, startIdx, endIdx: timeline.length - 1 });
+  return bands;
+}
+
 function MetricRow({
   label,
   left,
@@ -642,6 +706,14 @@ export function TraxrCompareModal({ open, pools, initialLeftId, onClose }: Props
     () => fullTimeline.slice(range[0], range[1] + 1),
     [fullTimeline, range],
   );
+  const leftSourceSummary = useMemo(
+    () => formatSourceSummary(leftTrend),
+    [leftTrend],
+  );
+  const rightSourceSummary = useMemo(
+    () => formatSourceSummary(rightTrend),
+    [rightTrend],
+  );
 
   const leftByTs = useMemo(
     () => new Map(leftTrend.map((p) => [p.timestamp, p])),
@@ -650,6 +722,10 @@ export function TraxrCompareModal({ open, pools, initialLeftId, onClose }: Props
   const rightByTs = useMemo(
     () => new Map(rightTrend.map((p) => [p.timestamp, p])),
     [rightTrend],
+  );
+  const sourceBands = useMemo(
+    () => buildSourceBands(timeline, leftByTs, rightByTs),
+    [timeline, leftByTs, rightByTs],
   );
 
   const chartWidth = size.width || 640;
@@ -1145,6 +1221,45 @@ export function TraxrCompareModal({ open, pools, initialLeftId, onClose }: Props
                           setPinnedIndex((prev) => (prev === idx ? null : idx));
                         }}
                       >
+                        {sourceBands.map((band) => {
+                          const totalPoints = timeline.length;
+                          if (!totalPoints) return null;
+                          const indexToX = (idx: number) =>
+                            padding.left +
+                            (totalPoints === 1
+                              ? 0
+                              : (idx / (totalPoints - 1)) * plotWidth);
+                          const xStart = indexToX(band.startIdx);
+                          const rightBound =
+                            band.endIdx === totalPoints - 1
+                              ? padding.left + plotWidth
+                              : indexToX(band.endIdx + 1);
+                          const width = Math.max(4, rightBound - xStart);
+                          const fill =
+                            band.sourceKey === "avalanche-rpc"
+                              ? "rgba(34,197,94,0.12)"
+                              : band.sourceKey === "geckoterminal"
+                                ? "rgba(59,130,246,0.06)"
+                                : "rgba(148,163,184,0.05)";
+                          const stroke =
+                            band.sourceKey === "avalanche-rpc"
+                              ? "rgba(52,211,153,0.35)"
+                              : band.sourceKey === "geckoterminal"
+                                ? "rgba(96,165,250,0.2)"
+                                : "rgba(148,163,184,0.12)";
+                          return (
+                            <rect
+                              key={`compare-source-band-${band.startIdx}-${band.endIdx}-${band.sourceKey}`}
+                              x={xStart}
+                              y={padding.top}
+                              width={width}
+                              height={plotHeight}
+                              fill={fill}
+                              stroke={stroke}
+                              strokeWidth={0.8}
+                            />
+                          );
+                        })}
                         {Array.from({ length: 4 }).map((_, idx) => {
                           const y = padding.top + (idx / 3) * plotHeight;
                           return (
@@ -1375,9 +1490,15 @@ export function TraxrCompareModal({ open, pools, initialLeftId, onClose }: Props
                         <span className="h-2 w-2 rounded-full bg-cyan-300" />
                         <span>{leftName}</span>
                       </div>
+                      <div className="pl-4 text-[10px] uppercase tracking-[0.14em] text-white/45">
+                        {leftSourceSummary}
+                      </div>
                       <div className="flex items-center gap-2">
                         <span className="h-2 w-2 rounded-full bg-amber-300" />
                         <span>{rightName}</span>
+                      </div>
+                      <div className="pl-4 text-[10px] uppercase tracking-[0.14em] text-white/45">
+                        {rightSourceSummary}
                       </div>
                     </div>
                   </div>

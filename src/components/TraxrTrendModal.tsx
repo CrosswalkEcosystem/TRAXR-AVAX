@@ -274,6 +274,52 @@ function getMetricValue(point: TraxrTrendPoint, key: MetricKey) {
   }
 }
 
+function formatSourceSummary(points: TraxrTrendPoint[]) {
+  const counts = new Map<string, number>();
+  for (const point of points) {
+    const source = point.metrics?.dataSource || "unknown";
+    counts.set(source, (counts.get(source) ?? 0) + 1);
+  }
+  const ordered = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+  if (!ordered.length) return "n/a";
+  return ordered.map(([name, count]) => `${name} ${count}`).join(" | ");
+}
+
+type SourceBand = {
+  sourceKey: "avalanche-rpc" | "geckoterminal" | "other";
+  startIdx: number;
+  endIdx: number;
+};
+
+function sourceBandKey(point: TraxrTrendPoint): SourceBand["sourceKey"] {
+  const source = String(point.metrics?.dataSource || "").toLowerCase();
+  if (source === "avalanche-rpc") return "avalanche-rpc";
+  if (source.includes("geckoterminal")) return "geckoterminal";
+  return "other";
+}
+
+function buildSourceBands(points: TraxrTrendPoint[]): SourceBand[] {
+  if (!points.length) return [];
+  const bands: SourceBand[] = [];
+  let currentKey = sourceBandKey(points[0]);
+  let startIdx = 0;
+
+  for (let i = 1; i < points.length; i += 1) {
+    const key = sourceBandKey(points[i]);
+    if (key === currentKey) continue;
+    bands.push({ sourceKey: currentKey, startIdx, endIdx: i - 1 });
+    currentKey = key;
+    startIdx = i;
+  }
+
+  bands.push({
+    sourceKey: currentKey,
+    startIdx,
+    endIdx: points.length - 1,
+  });
+  return bands;
+}
+
 function useSize() {
   const ref = useRef<HTMLDivElement | null>(null);
   const [size, setSize] = useState({ width: 0, height: 0 });
@@ -350,6 +396,10 @@ export function TraxrTrendModal({ open, pool, onClose }: Props) {
 
   const total = data.length;
   const windowed = data.slice(range[0], range[1] + 1);
+  const sourceSummary = useMemo(
+    () => formatSourceSummary(windowed.length ? windowed : data),
+    [windowed, data],
+  );
   const activeSet = new Set(activeMetrics);
   const activeOptions = metricOptions.filter((m) => activeSet.has(m.key));
 
@@ -397,6 +447,7 @@ export function TraxrTrendModal({ open, pool, onClose }: Props) {
   const padding = { left: 36, right: 16, top: 16, bottom: 28 };
   const plotWidth = Math.max(0, chartWidth - padding.left - padding.right);
   const plotHeight = Math.max(0, chartHeight - padding.top - padding.bottom);
+  const sourceBands = useMemo(() => buildSourceBands(windowed), [windowed]);
 
   const paths = useMemo(() => {
     const map = new Map<MetricKey, string>();
@@ -644,6 +695,45 @@ export function TraxrTrendModal({ open, pool, onClose }: Props) {
                             <stop offset="100%" stopColor="rgba(0,0,0,0)" />
                           </linearGradient>
                         </defs>
+                        {sourceBands.map((band) => {
+                          const totalPoints = windowed.length;
+                          if (!totalPoints) return null;
+                          const indexToX = (idx: number) =>
+                            padding.left +
+                            (totalPoints === 1
+                              ? 0
+                              : (idx / (totalPoints - 1)) * plotWidth);
+                          const xStart = indexToX(band.startIdx);
+                          const rightBound =
+                            band.endIdx === totalPoints - 1
+                              ? padding.left + plotWidth
+                              : indexToX(band.endIdx + 1);
+                          const width = Math.max(4, rightBound - xStart);
+                          const fill =
+                            band.sourceKey === "avalanche-rpc"
+                              ? "rgba(34,197,94,0.12)"
+                              : band.sourceKey === "geckoterminal"
+                                ? "rgba(59,130,246,0.06)"
+                                : "rgba(148,163,184,0.05)";
+                          const stroke =
+                            band.sourceKey === "avalanche-rpc"
+                              ? "rgba(52,211,153,0.35)"
+                              : band.sourceKey === "geckoterminal"
+                                ? "rgba(96,165,250,0.2)"
+                                : "rgba(148,163,184,0.12)";
+                          return (
+                            <rect
+                              key={`source-band-${band.startIdx}-${band.endIdx}-${band.sourceKey}`}
+                              x={xStart}
+                              y={padding.top}
+                              width={width}
+                              height={plotHeight}
+                              fill={fill}
+                              stroke={stroke}
+                              strokeWidth={0.8}
+                            />
+                          );
+                        })}
                         {Array.from({ length: 4 }).map((_, idx) => {
                           const y =
                             padding.top + (idx / 3) * plotHeight;
@@ -737,16 +827,31 @@ export function TraxrTrendModal({ open, pool, onClose }: Props) {
                       <div className="text-xs uppercase tracking-[0.22em] text-white/60">
                         Snapshots {total}
                       </div>
-                      <div className="text-xs text-white/60">
-                        {windowed[0]
-                          ? new Date(windowed[0].timestamp).toLocaleString()
-                          : "n/a"}{" "}
-                        -{" "}
-                        {windowed[windowed.length - 1]
-                          ? new Date(
-                              windowed[windowed.length - 1].timestamp,
-                            ).toLocaleString()
-                          : "n/a"}
+                      <div className="text-right text-xs text-white/60">
+                        <div>
+                          {windowed[0]
+                            ? new Date(windowed[0].timestamp).toLocaleString()
+                            : "n/a"}{" "}
+                          -{" "}
+                          {windowed[windowed.length - 1]
+                            ? new Date(
+                                windowed[windowed.length - 1].timestamp,
+                              ).toLocaleString()
+                            : "n/a"}
+                        </div>
+                        <div className="mt-1 text-[10px] uppercase tracking-[0.14em] text-white/45">
+                          Sources: {sourceSummary}
+                        </div>
+                        <div className="mt-1 flex items-center justify-end gap-3 text-[10px] uppercase tracking-[0.14em] text-white/40">
+                          <span className="inline-flex items-center gap-1">
+                            <span className="h-2 w-2 rounded-full bg-blue-400/80" />
+                            Gecko
+                          </span>
+                          <span className="inline-flex items-center gap-1">
+                            <span className="h-2 w-2 rounded-full bg-emerald-400/80" />
+                            AVAX RPC
+                          </span>
+                        </div>
                       </div>
                     </div>
 

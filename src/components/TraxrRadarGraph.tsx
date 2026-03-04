@@ -14,6 +14,22 @@ export function TraxrRadarGraph({ nodes, score = 0, size = 220 }: Props) {
   const [hover, setHover] = useState<{ dim: string; value: number } | null>(null);
   const displayScore = Math.round(score);
   const dims = ["depth", "activity", "impact", "stability", "trust", "fee"];
+  const labels: Record<string, string> = {
+    depth: "DEPTH",
+    activity: "ACTIVITY",
+    impact: "IMPACT",
+    stability: "STABILITY",
+    trust: "TRUST",
+    fee: "DEPS",
+  };
+  const hoverLabels: Record<string, string> = {
+    depth: "Liquidity Depth",
+    activity: "Trading Activity",
+    impact: "Volatility Impact",
+    stability: "Fee Stability",
+    trust: "Contract Risk",
+    fee: "Dependencies",
+  };
   const radius = Math.round(size * 0.4);
   const center = size / 2;
   const points = dims.map((dim, i) => {
@@ -110,7 +126,7 @@ export function TraxrRadarGraph({ nodes, score = 0, size = 220 }: Props) {
               textAnchor="middle"
               className="fill-white/60 text-[10px] sm:text-[11px]"
             >
-              {p.dim.toUpperCase()}
+              {labels[p.dim] || p.dim.toUpperCase()}
             </text>
           </g>
         ))}
@@ -148,7 +164,7 @@ export function TraxrRadarGraph({ nodes, score = 0, size = 220 }: Props) {
               textAnchor="middle"
               className="fill-white text-[11px]"
             >
-              {hover.dim.toUpperCase()}: {hover.value.toFixed(0)}
+              {(hoverLabels[hover.dim] || hover.dim)}: {hover.value.toFixed(0)}
             </text>
           </g>
         ) : null}

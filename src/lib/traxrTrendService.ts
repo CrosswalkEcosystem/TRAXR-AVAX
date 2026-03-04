@@ -10,6 +10,7 @@ const LOCAL_POOLS_DIR = path.join(process.cwd(), "data");
 type TrendCache = {
   signature: string;
   byPool: Map<string, TraxrTrendPoint[]>;
+  byAddress: Map<string, TraxrTrendPoint[]>;
 };
 
 let trendCache: TrendCache | null = null;
@@ -56,6 +57,7 @@ function listSnapshotFiles() {
     const files = fs.readdirSync(LOCAL_POOLS_DIR);
     const allSnapshots = files
       .filter((name) => /^avaxPools_.*\.json$/i.test(name))
+      .filter((name) => !/^avaxPools\.json$/i.test(name))
       .map((name) => {
         const fullPath = path.join(LOCAL_POOLS_DIR, name);
         const stat = fs.statSync(fullPath);
@@ -69,15 +71,35 @@ function listSnapshotFiles() {
         };
       });
 
-    const nativeSnapshots = allSnapshots.filter((item) =>
-      /^avaxPools_avaxrpc_.*\.json$/i.test(item.name),
-    );
-    const selected = nativeSnapshots.length ? nativeSnapshots : allSnapshots;
-    return selected
-      .sort((a, b) => a.timestamp.localeCompare(b.timestamp));
+    return allSnapshots.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
   } catch {
     return [];
   }
+}
+
+function sourcePriority(point: TraxrTrendPoint) {
+  const source = point.metrics?.dataSource || "";
+  if (source === "avalanche-rpc") return 3;
+  if (source === "geckoterminal-selection") return 2;
+  if (source === "geckoterminal") return 1;
+  return 0;
+}
+
+function dedupeSeriesByTimestamp(series: TraxrTrendPoint[]) {
+  const byTimestamp = new Map<string, TraxrTrendPoint>();
+  for (const point of series) {
+    const prev = byTimestamp.get(point.timestamp);
+    if (!prev) {
+      byTimestamp.set(point.timestamp, point);
+      continue;
+    }
+    if (sourcePriority(point) >= sourcePriority(prev)) {
+      byTimestamp.set(point.timestamp, point);
+    }
+  }
+  return [...byTimestamp.values()].sort((a, b) =>
+    a.timestamp.localeCompare(b.timestamp),
+  );
 }
 
 function buildTrendIndex(): TrendCache {
@@ -87,6 +109,7 @@ function buildTrendIndex(): TrendCache {
   if (trendCache && trendCache.signature === signature) return trendCache;
 
   const byPool = new Map<string, TraxrTrendPoint[]>();
+  const byAddress = new Map<string, TraxrTrendPoint[]>();
 
   for (const file of files) {
     try {
@@ -119,6 +142,13 @@ function buildTrendIndex(): TrendCache {
         const list = byPool.get(normalized.poolId) ?? [];
         list.push(point);
         byPool.set(normalized.poolId, list);
+
+        const address = normalized.poolAddress?.toLowerCase();
+        if (address) {
+          const byAddrList = byAddress.get(address) ?? [];
+          byAddrList.push(point);
+          byAddress.set(address, byAddrList);
+        }
       }
     } catch (e) {
       console.warn("[TRAXR-AVAX] trend snapshot parse failed", file.name, e);
@@ -126,16 +156,29 @@ function buildTrendIndex(): TrendCache {
   }
 
   for (const [key, series] of byPool.entries()) {
-    series.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
-    byPool.set(key, series);
+    byPool.set(key, dedupeSeriesByTimestamp(series));
+  }
+  for (const [key, series] of byAddress.entries()) {
+    byAddress.set(key, dedupeSeriesByTimestamp(series));
   }
 
-  trendCache = { signature, byPool };
+  trendCache = { signature, byPool, byAddress };
   return trendCache;
 }
 
 export function getPoolTrend(poolId: string): TraxrTrendPoint[] {
   if (!poolId) return [];
   const cache = buildTrendIndex();
-  return cache.byPool.get(poolId) ?? [];
+  const exact = cache.byPool.get(poolId);
+  if (exact?.length) return exact;
+
+  const id = poolId.toLowerCase();
+  const addressMatch = id.match(/0x[a-f0-9]{40}/);
+  const address = addressMatch ? addressMatch[0] : null;
+  if (address) {
+    const byAddr = cache.byAddress.get(address);
+    if (byAddr?.length) return byAddr;
+  }
+
+  return [];
 }

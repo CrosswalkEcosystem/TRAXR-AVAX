@@ -36,12 +36,12 @@ const TRIPLE_ARCHETYPE_EXPLANATIONS: Record<TripleArchetype, Explanation> = {
   MARKET_STRUCTURE: {
     title: "Market Structure",
     body:
-      "Liquidity depth, concentration, and fee stability describe the pool's structural resilience.",
+      "Liquidity depth, observed trading activity, and fee stability describe the pool's structural resilience.",
   },
   EXECUTION_PROFILE: {
     title: "Execution Profile",
     body:
-      "Depth, concentration, and impact together shape execution quality under trade pressure.",
+      "Depth, trading activity, and impact together shape execution quality under trade pressure.",
   },
   DEPENDENCY_CONTEXT: {
     title: "Dependency Context",
@@ -62,9 +62,9 @@ const TRIPLE_ARCHETYPE_EXPLANATIONS: Record<TripleArchetype, Explanation> = {
 
 const ARCHETYPE_EXPLANATIONS: Record<InteractionArchetype, Explanation> = {
   USAGE_EFFICIENCY: {
-    title: "Concentration vs Depth",
+    title: "Activity vs Depth",
     body:
-      "This combination evaluates how liquidity depth aligns with concentration risk.",
+      "This combination evaluates how liquidity depth aligns with real observed trading activity.",
   },
   LIQUIDITY_STRESS: {
     title: "Liquidity Stress",
@@ -77,9 +77,9 @@ const ARCHETYPE_EXPLANATIONS: Record<InteractionArchetype, Explanation> = {
       "Liquidity size alone does not guarantee stable fee behavior.",
   },
   CONCENTRATION_DYNAMICS: {
-    title: "Concentration Dynamics",
+    title: "Control Dynamics",
     body:
-      "Liquidity concentration and contract posture shape control risk.",
+      "Contract posture and market activity together shape control and operational risk.",
   },
   COST_PRESSURE: {
     title: "Dependency Pressure",
@@ -161,19 +161,19 @@ export function getLocalExplanation(
     },
     activity: {
       high: {
-        title: "Concentration",
+        title: "Trading Activity",
         body:
-          "Liquidity is widely distributed across LPs.",
+          "Recent volume and transaction flow are healthy relative to pool depth.",
       },
       mid: {
-        title: "Concentration",
+        title: "Trading Activity",
         body:
-          "Liquidity distribution is moderately concentrated.",
+          "Pool shows moderate usage with consistent but not strong trading flow.",
       },
       low: {
-        title: "Concentration",
+        title: "Trading Activity",
         body:
-          "Liquidity appears highly concentrated among LPs.",
+          "Recent activity is limited versus available depth (low turnover / low tx count).",
       },
     },
     impact: {
@@ -299,29 +299,29 @@ const PAIRS: Partial<Record<
 >> = {
   activity_depth: {
     high_high: {
-      title: "Healthy Depth",
+      title: "Healthy Market Utilization",
       body:
-        "Depth is strong and liquidity is well distributed.",
+        "Depth is strong and the pool is actively used.",
     },
     high_low: {
-      title: "Concentrated Depth",
+      title: "Active but Thin",
       body:
-        "Depth is present but concentrated among fewer LPs.",
+        "Trading flow is present, but available depth can be stressed by larger trades.",
     },
     low_high: {
-      title: "Distributed but Thin",
+      title: "Deep but Idle",
       body:
-        "Liquidity is distributed but overall depth is limited.",
+        "Depth exists, but current usage is low relative to available liquidity.",
     },
     low_low: {
-      title: "Thin and Concentrated",
+      title: "Thin and Quiet",
       body:
-        "Depth is limited and liquidity appears concentrated.",
+        "Both depth and observed activity are weak.",
     },
     mid_mid: {
       title: "Moderate Coverage",
       body:
-        "Depth and distribution are balanced at moderate levels.",
+        "Depth and activity are balanced at moderate levels.",
     },
   },
   depth_impact: {
@@ -350,14 +350,14 @@ const PAIRS: Partial<Record<
   },
   activity_trust: {
     high_high: {
-      title: "Distributed Controls",
+      title: "Active with Constrained Controls",
       body:
-        "Liquidity is distributed and contract controls appear constrained.",
+        "Pool is active and contract controls appear constrained.",
     },
     low_low: {
-      title: "Concentrated Control",
+      title: "Low Activity with Elevated Controls",
       body:
-        "Liquidity is concentrated and contract controls are elevated.",
+        "Activity is weak while contract control risk remains elevated.",
     },
   },
   depth_trust: {
@@ -374,14 +374,14 @@ const PAIRS: Partial<Record<
   },
   activity_fee: {
     high_high: {
-      title: "Minimal Dependencies",
+      title: "Active with Minimal Dependencies",
       body:
-        "Liquidity is distributed and dependency flags are minimal.",
+        "Trading activity is healthy and dependency flags are minimal.",
     },
     low_high: {
       title: "Dependency Exposure",
       body:
-        "Dependencies appear elevated despite concentrated liquidity.",
+        "Dependencies appear elevated while activity remains weak.",
     },
   },
 };

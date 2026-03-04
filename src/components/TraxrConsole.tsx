@@ -23,6 +23,15 @@ const ALL_NODES: NodeKey[] = [
   "fee",
 ];
 
+const NODE_META: Record<NodeKey, { short: string; title: string }> = {
+  depth: { short: "Depth", title: "Liquidity Depth" },
+  activity: { short: "Activity", title: "Trading Activity" },
+  impact: { short: "Impact", title: "Volatility Impact" },
+  stability: { short: "Stability", title: "Fee Stability" },
+  trust: { short: "Trust", title: "Contract Risk" },
+  fee: { short: "Dependencies", title: "Protocol Dependencies" },
+};
+
 export function TraxrConsole({ pool }: Props) {
   const nodes = pool.nodes;
 
@@ -54,8 +63,8 @@ export function TraxrConsole({ pool }: Props) {
 
     if (!next || next.length === 0) return null;
 
-    return `Tip: Combine ${base.toUpperCase()} with ${next
-      .map((n) => n.toUpperCase())
+    return `Tip: Combine ${NODE_META[base].short} with ${next
+      .map((n) => NODE_META[n].short)
       .join(" or ")} for deeper context.`;
   }, [selected]);
 
@@ -82,7 +91,7 @@ export function TraxrConsole({ pool }: Props) {
       const exp = getLocalExplanation(key, nodes[key]);
 
       return (
-        `TRAXR-AVAX> Analyzing ${key.toUpperCase()}\n\n` +
+        `TRAXR-AVAX> Analyzing ${NODE_META[key].title}\n\n` +
         `${exp.title}\n\n` +
         `${exp.body}\n\n` +
         (suggestionHint ? `\n${suggestionHint}` : "")
@@ -98,7 +107,7 @@ export function TraxrConsole({ pool }: Props) {
     if (contextual.length === 0) {
       return (
         `TRAXR-AVAX> Analyzing ${selected
-          .map((s) => s.toUpperCase())
+          .map((s) => NODE_META[s].short)
           .join(" + ")}\n\n` +
         "Metrics are within neutral ranges.\n" +
         "No strong structural or behavioral signal detected.\n\n" +
@@ -108,7 +117,7 @@ export function TraxrConsole({ pool }: Props) {
 
     return (
       `TRAXR-AVAX> Analyzing ${selected
-        .map((s) => s.toUpperCase())
+        .map((s) => NODE_META[s].short)
         .join(" + ")}\n\n` +
       contextual
         .map((e) => `${e.title}\n\n${e.body}`)
@@ -181,7 +190,7 @@ export function TraxrConsole({ pool }: Props) {
                 }
               `}
             >
-              {node}
+              {NODE_META[node].short}
             </button>
           );
         })}
