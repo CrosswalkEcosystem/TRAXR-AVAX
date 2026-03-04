@@ -17,6 +17,7 @@ import {
   FiTrendingUp,
   FiZap,
 } from "react-icons/fi";
+import { PoolSelect } from "./PoolSelect";
 
 type Props = {
   open: boolean;
@@ -56,11 +57,11 @@ const metricOptions: MetricOption[] = [
   { key: "liquidity", label: "Liquidity (USD)", icon: FiDroplet, description: "Total pool liquidity in USD (source feed)." },
   { key: "volume24h", label: "24h Volume (USD)", icon: FiActivity, description: "24h swap volume in USD (source feed)." },
   { key: "feePct", label: "Fee %", icon: FiPercent, description: "AMM trading fee percentage (lower is cheaper)." },
-  { key: "concentration", label: "Concentration %", icon: FiActivity, description: "Liquidity concentration (alpha estimate)." },
+  { key: "concentration", label: "Concentration %", icon: FiActivity, description: "Raw liquidity concentration from snapshot." },
   { key: "volatilityImpact", label: "Volatility Impact %", icon: FiTarget, description: "Price impact proxy from 24h volume." },
   { key: "warnings", label: "Warnings", icon: FiAlertTriangle, description: "Number of TRAXR warning flags." },
   { key: "depth", label: "Depth", icon: FiLayers, description: "Liquidity depth normalization." },
-  { key: "activity", label: "Activity", icon: FiZap, description: "Liquidity concentration proxy." },
+  { key: "activity", label: "Activity", icon: FiZap, description: "Observed trading activity vs available depth." },
   { key: "impact", label: "Impact", icon: FiTarget, description: "Volatility impact proxy." },
   { key: "stability", label: "Stability", icon: FiThermometer, description: "Fee stability proxy." },
   { key: "trust", label: "Trust", icon: FiShield, description: "Contract risk flags." },
@@ -71,7 +72,7 @@ const defaultMetrics: MetricKey[] = ["score"];
 
 const nodeLabels: Record<keyof TraxrNodeBreakdown, string> = {
   depth: "Depth",
-  activity: "Concentration",
+  activity: "Activity",
   impact: "Impact",
   stability: "Fee Stability",
   trust: "Contract Risk",
@@ -80,11 +81,11 @@ const nodeLabels: Record<keyof TraxrNodeBreakdown, string> = {
 
 const nodeDescriptions: Record<keyof TraxrNodeBreakdown, string> = {
   depth: "Estimated depth available for swaps",
-  activity: "LP concentration (lower is better)",
+  activity: "Observed usage relative to available liquidity",
   impact: "Price sensitivity under trade pressure",
-  stability: "Fee change stability (alpha)",
+  stability: "Fee consistency over time",
   trust: "Proxy/upgradeability/admin controls",
-  fee: "Protocol dependency flags (alpha)",
+  fee: "Protocol dependency flags",
 };
 
 const formatInt = (value: number) =>
@@ -215,6 +216,13 @@ function tokenDisplay(opts: {
     return `${base} (${short})`;
   }
   return base;
+}
+
+function formatDexChipLabel(dex?: string) {
+  if (!dex) return "dex: unknown";
+  let out = dex.replace(/[_\s]+/g, "-").toLowerCase();
+  if (out.length > 28) out = `${out.slice(0, 27)}…`;
+  return out;
 }
 
 function pickOther(leftId: string | undefined, pools: TraxrScoreResult[], prefer?: string) {
@@ -459,7 +467,7 @@ function NodeRow({
             {nodeKey === "stability" ? (
               <>
                 <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] uppercase tracking-[0.2em] text-white/50">
-                  Alpha
+                  Normalized
                 </span>
                 <span className="relative">
                   <button
@@ -479,7 +487,7 @@ function NodeRow({
                       showStabilityTip ? "opacity-100" : "opacity-0"
                     }`}
                   >
-                    Volatility-based stability is normalized in alpha mode.
+                    Stability node is a normalized CTS interpretation, not the raw fee percentage.
                   </span>
                 </span>
               </>
@@ -677,6 +685,28 @@ export function TraxrCompareModal({ open, pools, initialLeftId, onClose }: Props
 
   const leftName = left ? poolLabel(left) : "Left pool";
   const rightName = right ? poolLabel(right) : "Right pool";
+  const leftDex = formatDexChipLabel((left?.metrics as any)?.dex);
+  const rightDex = formatDexChipLabel((right?.metrics as any)?.dex);
+  const leftOptions = useMemo(
+    () =>
+      pools.map((p, idx) => ({
+        value: p.poolId || `${idx}-${p.score}`,
+        label: `${poolLabel(p)} | CTS ${p.ctsNodes}`,
+        dexLabel: formatDexChipLabel((p.metrics as any)?.dex),
+        disabled: p.poolId === rightId,
+      })),
+    [pools, rightId],
+  );
+  const rightOptions = useMemo(
+    () =>
+      pools.map((p, idx) => ({
+        value: p.poolId || `${idx}-${p.score}`,
+        label: `${poolLabel(p)} | CTS ${p.ctsNodes}`,
+        dexLabel: formatDexChipLabel((p.metrics as any)?.dex),
+        disabled: p.poolId === leftId,
+      })),
+    [pools, leftId],
+  );
 
   const hintMetric = hintKey
     ? metricOptions.find((metric) => metric.key === hintKey) ?? null
@@ -912,25 +942,24 @@ export function TraxrCompareModal({ open, pools, initialLeftId, onClose }: Props
             <>
             <div className="grid gap-2 rounded-2xl border border-white/10 bg-white/5 p-4 grid-cols-[1fr_auto_1fr]">
               <div className="space-y-2">
-                <div className="text-[11px] uppercase tracking-[0.24em] text-white/60">Left pool</div>
-                <select
+                <div className="flex items-center justify-between gap-2">
+                  <div className="text-[11px] uppercase tracking-[0.24em] text-white/60">Left pool</div>
+                  <span
+                    className="max-w-[110px] rounded-full border border-amber-400/40 bg-amber-500/10 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.18em] text-amber-100 truncate"
+                    title={(left?.metrics as any)?.dex || "unknown"}
+                  >
+                    {leftDex}
+                  </span>
+                </div>
+                <PoolSelect
                   value={leftId || ""}
-                  onChange={(e) => {
-                    const next = e.target.value;
+                  options={leftOptions}
+                  onChange={(next) => {
                     setLeftId(next);
                     setRightId((prev) => pickOther(next, pools, prev));
                   }}
-                  className="w-full rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-sm text-white outline-none focus:border-cyan-400/60"
-                >
-                  {pools.map((p, idx) => {
-                    const key = p.poolId || `${idx}-${p.score}`;
-                    return (
-                      <option key={key} value={p.poolId} disabled={p.poolId === rightId}>
-                        {poolLabel(p)} | CTS {p.ctsNodes}
-                      </option>
-                    );
-                  })}
-                </select>
+                  placeholder="Select left pool"
+                />
               </div>
               <div className="flex items-center justify-center">
                 <button
@@ -946,27 +975,26 @@ export function TraxrCompareModal({ open, pools, initialLeftId, onClose }: Props
                 </button>
               </div>
               <div className="space-y-2">
-                <div className="text-[11px] uppercase tracking-[0.24em] text-white/60">Right pool</div>
-                <select
+                <div className="flex items-center justify-between gap-2">
+                  <div className="text-[11px] uppercase tracking-[0.24em] text-white/60">Right pool</div>
+                  <span
+                    className="max-w-[110px] rounded-full border border-amber-400/40 bg-amber-500/10 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.18em] text-amber-100 truncate"
+                    title={(right?.metrics as any)?.dex || "unknown"}
+                  >
+                    {rightDex}
+                  </span>
+                </div>
+                <PoolSelect
                   value={rightId || ""}
-                  onChange={(e) => {
-                    const next = e.target.value;
+                  options={rightOptions}
+                  onChange={(next) => {
                     setRightId(next);
                     if (next === leftId) {
                       setLeftId(pickOther(next, pools, leftId));
                     }
                   }}
-                  className="w-full rounded-xl border border-white/15 bg-black/40 px-3 py-2 text-sm text-white outline-none focus:border-amber-400/60"
-                >
-                  {pools.map((p, idx) => {
-                    const key = p.poolId || `${idx}-${p.score}`;
-                    return (
-                      <option key={key} value={p.poolId} disabled={p.poolId === leftId}>
-                        {poolLabel(p)} | CTS {p.ctsNodes}
-                      </option>
-                    );
-                  })}
-                </select>
+                  placeholder="Select right pool"
+                />
               </div>
             </div>
 

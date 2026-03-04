@@ -8,6 +8,7 @@ import { TraxrConsole } from "./TraxrConsole";
 import { TraxrLiquidityChart } from "./TraxrLiquidityChart";
 import { TraxrCompareModal } from "./TraxrCompareModal";
 import { TraxrTrendModal } from "./TraxrTrendModal";
+import { PoolSelect } from "./PoolSelect";
 
 type Props = {
   pools: TraxrScoreResult[];
@@ -69,6 +70,19 @@ export function TraxrDashboard({ pools }: Props) {
   );
   const selected =
     filtered.find((p) => p.poolId === selectedPoolId) || filtered[0];
+  const poolOptions = useMemo(
+    () =>
+      filtered.map((p, idx) => {
+        const m: any = p.metrics || {};
+        const key = p.poolId || `${m.mintA || "A"}-${m.mintB || "B"}-${idx}`;
+        return {
+          value: p.poolId || key,
+          label: `${poolLabel(p)} | CTS ${p.ctsNodes}`,
+          dexLabel: formatDexChipLabel(m.dex),
+        };
+      }),
+    [filtered],
+  );
 
   function poolLabel(p: TraxrScoreResult) {
     const m: any = p.metrics || {};
@@ -106,6 +120,13 @@ export function TraxrDashboard({ pools }: Props) {
 
   function shortAddress(address: string) {
     return `${address.slice(0, 4)}...${address.slice(-4)}`;
+  }
+
+  function formatDexChipLabel(dex?: string) {
+    if (!dex) return "dex: unknown";
+    let out = dex.replace(/[_\s]+/g, "-").toLowerCase();
+    if (out.length > 28) out = `${out.slice(0, 27)}…`;
+    return out;
   }
 
   const handleSelect = useCallback(
@@ -164,23 +185,13 @@ export function TraxrDashboard({ pools }: Props) {
             placeholder="Search by pool id or token pair"
             className="w-full rounded-full border border-white/20 bg-black/30 px-4 py-2 text-sm text-white outline-none ring-2 ring-transparent focus:border-cyan-400/60 focus:ring-cyan-400/30 lg:max-w-sm"
           />
-          <select
+          <PoolSelect
+            className="w-full lg:max-w-sm"
             value={selected?.poolId || ""}
-            onChange={(e) => setSelectedPoolId(e.target.value)}
-            className="w-full rounded-full border border-white/20 bg-gradient-to-r from-[#0f1829] via-[#0c1322] to-[#0a0f1c] px-4 py-2 text-sm text-white outline-none ring-2 ring-transparent focus:border-cyan-400/60 focus:ring-cyan-400/30 shadow-[0_0_18px_rgba(0,255,255,0.15)] lg:max-w-sm"
-          >
-            {filtered.map((p, idx) => {
-              const m: any = p.metrics || {};
-              const key =
-                p.poolId || `${m.mintA || "A"}-${m.mintB || "B"}-${idx}`;
-              const value = p.poolId || key;
-              return (
-                <option key={key} value={value}>
-                  {poolLabel(p)} | CTS {p.ctsNodes}
-                </option>
-              );
-            })}
-          </select>
+            options={poolOptions}
+            onChange={(next) => setSelectedPoolId(next)}
+            placeholder="Select pool"
+          />
         </div>
       </div>
 

@@ -151,7 +151,7 @@ const metricOptions: MetricOption[] = [
     icon: FiZap,
     strokeClass: "stroke-blue-300",
     dotClass: "bg-blue-300",
-    description: "Liquidity concentration proxy.",
+    description: "Observed trading activity vs available depth.",
     format: formatInt,
   },
   {

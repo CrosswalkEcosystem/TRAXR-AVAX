@@ -187,7 +187,7 @@ export function TraxrPoolCard({ pool, onCompare, onTrend }: Props) {
                 Concentration
               </div>
               <span className="text-[10px] uppercase tracking-wider text-white/30 whitespace-nowrap">
-                Alpha
+                Raw
               </span>
             </div>
             <div className="text-sm sm:text-base font-semibold text-white">

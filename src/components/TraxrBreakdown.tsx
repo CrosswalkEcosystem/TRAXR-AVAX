@@ -6,7 +6,7 @@ type Props = {
 
 const labels: Record<keyof TraxrNodeBreakdown, string> = {
   depth: "Liquidity Depth",
-  activity: "Concentration",
+  activity: "Trading Activity",
   impact: "Volatility Impact",
   stability: "Fee Stability",
   trust: "Contract Risk",
@@ -15,11 +15,11 @@ const labels: Record<keyof TraxrNodeBreakdown, string> = {
 
 const descriptions: Record<keyof TraxrNodeBreakdown, string> = {
   depth: "Estimated depth available for swaps",
-  activity: "LP concentration (lower is better)",
+  activity: "Observed usage relative to available liquidity",
   impact: "Price sensitivity under trade pressure",
-  stability: "Fee change stability (alpha)",
+  stability: "Fee consistency over time",
   trust: "Proxy/upgradeability/admin controls",
-  fee: "Protocol dependency flags (alpha)",
+  fee: "Protocol dependency flags",
 };
 
 // TRAXR node breakdown visualizes CTS-derived percentages for each dimension.
