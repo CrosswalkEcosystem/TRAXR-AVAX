@@ -18,6 +18,53 @@ type Props = {
   className?: string;
 };
 
+function renderHighlightedLabel(label: string) {
+  const [pairPartRaw, suffixRaw] = label.split("|", 2);
+  const pairPart = (pairPartRaw || "").trim();
+  const suffix = (suffixRaw || "").trim();
+
+  const slashIdx = pairPart.indexOf("/");
+  const left = slashIdx >= 0 ? pairPart.slice(0, slashIdx).trim() : pairPart;
+  const right = slashIdx >= 0 ? pairPart.slice(slashIdx + 1).trim() : "";
+  const parseTokenChunk = (chunk: string) => {
+    const open = chunk.lastIndexOf("(");
+    const close = chunk.lastIndexOf(")");
+    if (open >= 0 && close > open) {
+      return {
+        name: chunk.slice(0, open).trim(),
+        address: chunk.slice(open, close + 1).trim(),
+      };
+    }
+    return { name: chunk.trim(), address: "" };
+  };
+
+  const leftParsed = parseTokenChunk(left);
+  const rightParsed = parseTokenChunk(right);
+
+  return (
+    <span className="min-w-0 flex-1 truncate">
+      <span className="truncate font-semibold text-cyan-100">
+        {leftParsed.name}
+      </span>
+      {leftParsed.address ? (
+        <span className="ml-1 text-white/65">{leftParsed.address}</span>
+      ) : null}
+      {right ? (
+        <>
+          <span className="mx-1 text-white/45">/</span>
+          <span className="truncate font-semibold text-emerald-100">
+            {rightParsed.name}
+          </span>
+          {rightParsed.address ? (
+            <span className="ml-1 text-white/65">{rightParsed.address}</span>
+          ) : null}
+        </>
+      ) : null}
+      {suffix ? <span className="ml-2 text-white/50">| {suffix}</span> : null}
+    </span>
+  );
+}
+
 export function PoolSelect({
   value,
   options,
@@ -50,7 +97,7 @@ export function PoolSelect({
   return (
     <div
       ref={rootRef}
-      className={`relative ${open ? "z-[1200]" : "z-20"} ${className}`}
+      className={`relative ${open ? "z-40" : "z-20"} ${className}`}
     >
       <button
         type="button"
@@ -59,14 +106,25 @@ export function PoolSelect({
         aria-haspopup="listbox"
         aria-expanded={open}
       >
-        <span className="min-w-0 flex-1 truncate">
-          {selected?.label || placeholder}
-        </span>
+        {selected?.label ? (
+          renderHighlightedLabel(selected.label)
+        ) : (
+          <span className="min-w-0 flex-1 truncate">{placeholder}</span>
+        )}
         {selected?.dexLabel ? (
           <span className="relative shrink-0">
-            <button
-              type="button"
+            <span
+              role="button"
+              tabIndex={0}
               onClick={(event) => {
+                event.stopPropagation();
+                setActiveDexTooltip((prev) =>
+                  prev === "__selected__" ? null : "__selected__",
+                );
+              }}
+              onKeyDown={(event) => {
+                if (event.key !== "Enter" && event.key !== " ") return;
+                event.preventDefault();
                 event.stopPropagation();
                 setActiveDexTooltip((prev) =>
                   prev === "__selected__" ? null : "__selected__",
@@ -82,9 +140,9 @@ export function PoolSelect({
               aria-label={`DEX ${selected.dexFullLabel || selected.dexLabel}`}
             >
               {selected.dexLabel}
-            </button>
+            </span>
             {activeDexTooltip === "__selected__" ? (
-              <span className="pointer-events-none absolute right-0 top-full z-[1210] mt-1 w-max max-w-[220px] rounded-lg border border-amber-300/30 bg-[#0a1220]/95 px-2 py-1 text-[10px] font-medium text-amber-100 shadow-[0_0_18px_rgba(0,0,0,0.45)]">
+              <span className="pointer-events-none absolute right-0 top-full z-50 mt-1 w-max max-w-[220px] rounded-lg border border-amber-300/30 bg-[#0a1220]/95 px-2 py-1 text-[10px] font-medium text-amber-100 shadow-[0_0_18px_rgba(0,0,0,0.45)]">
                 {selected.dexFullLabel || selected.dexLabel}
               </span>
             ) : null}
@@ -99,7 +157,7 @@ export function PoolSelect({
       </button>
 
       {open ? (
-        <div className="absolute z-[1210] mt-2 w-full overflow-hidden rounded-2xl border border-white/15 bg-[#0b1220]/95 shadow-[0_0_24px_rgba(0,0,0,0.45)] backdrop-blur">
+        <div className="absolute z-50 mt-2 w-full overflow-hidden rounded-2xl border border-white/15 bg-[#0b1220]/95 shadow-[0_0_24px_rgba(0,0,0,0.45)] backdrop-blur">
           <div role="listbox" className="max-h-80 overflow-auto p-2">
             {options.map((option) => {
               const isSelected = option.value === value;
@@ -124,11 +182,20 @@ export function PoolSelect({
                         : "border-white/10 bg-black/20 text-white/80 hover:border-white/25 hover:bg-white/10"
                   }`}
                 >
-                  <span className="min-w-0 flex-1 truncate">{option.label}</span>
+                  {renderHighlightedLabel(option.label)}
                   <span className="relative shrink-0">
-                    <button
-                      type="button"
+                    <span
+                      role="button"
+                      tabIndex={0}
                       onClick={(event) => {
+                        event.stopPropagation();
+                        setActiveDexTooltip((prev) =>
+                          prev === option.value ? null : option.value,
+                        );
+                      }}
+                      onKeyDown={(event) => {
+                        if (event.key !== "Enter" && event.key !== " ") return;
+                        event.preventDefault();
                         event.stopPropagation();
                         setActiveDexTooltip((prev) =>
                           prev === option.value ? null : option.value,
@@ -144,9 +211,9 @@ export function PoolSelect({
                       aria-label={`DEX ${option.dexFullLabel || option.dexLabel}`}
                     >
                       {option.dexLabel}
-                    </button>
+                    </span>
                     {activeDexTooltip === option.value ? (
-                      <span className="pointer-events-none absolute right-0 top-full z-[1220] mt-1 w-max max-w-[220px] rounded-lg border border-amber-300/30 bg-[#0a1220]/95 px-2 py-1 text-[10px] font-medium text-amber-100 shadow-[0_0_18px_rgba(0,0,0,0.45)]">
+                      <span className="pointer-events-none absolute right-0 top-full z-[60] mt-1 w-max max-w-[220px] rounded-lg border border-amber-300/30 bg-[#0a1220]/95 px-2 py-1 text-[10px] font-medium text-amber-100 shadow-[0_0_18px_rgba(0,0,0,0.45)]">
                         {option.dexFullLabel || option.dexLabel}
                       </span>
                     ) : null}

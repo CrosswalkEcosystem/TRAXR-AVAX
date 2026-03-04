@@ -129,11 +129,11 @@ const metricOptions: MetricOption[] = [
   },
   {
     key: "warnings",
-    label: "Warnings",
+    label: "Signals",
     icon: FiAlertTriangle,
     strokeClass: "stroke-red-300",
     dotClass: "bg-red-300",
-    description: "Number of TRAXR warning flags.",
+    description: "Count of risk/info signals from CTS checks.",
     format: formatInt,
   },
   {

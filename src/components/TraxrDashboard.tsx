@@ -75,10 +75,12 @@ export function TraxrDashboard({ pools }: Props) {
       filtered.map((p, idx) => {
         const m: any = p.metrics || {};
         const key = p.poolId || `${m.mintA || "A"}-${m.mintB || "B"}-${idx}`;
+        const dexFullLabel = formatDexFullLabel(m.dex);
         return {
           value: p.poolId || key,
           label: `${poolLabel(p)} | CTS ${p.ctsNodes}`,
-          dexLabel: formatDexChipLabel(m.dex),
+          dexLabel: formatDexShortLabel(dexFullLabel),
+          dexFullLabel,
         };
       }),
     [filtered],
@@ -122,24 +124,38 @@ export function TraxrDashboard({ pools }: Props) {
     return `${address.slice(0, 4)}...${address.slice(-4)}`;
   }
 
-  function formatDexChipLabel(dex?: string) {
-    if (!dex) return "dex: unknown";
-    let out = dex.replace(/[_\s]+/g, "-").toLowerCase();
-    if (out.length > 28) out = `${out.slice(0, 27)}…`;
-    return out;
+  function formatDexFullLabel(dex?: string) {
+    if (!dex) return "unknown-dex";
+    return dex.replace(/[_\s]+/g, "-").toLowerCase();
   }
 
-  const handleSelect = useCallback(
-    (p: TraxrScoreResult) => {
-      setSelectedPoolId(p.poolId);
-      requestAnimationFrame(() => {
-        document
-          .getElementById("traxr-selected-card")
-          ?.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
-    },
-    [],
-  );
+  function formatDexShortLabel(dexFullLabel: string) {
+    const map: Record<string, string> = {
+      traderjoe: "TJ",
+      "traderjoe-v2-1-avalanche": "TJ-v2.1-a",
+      "traderjoe-v1-avalanche": "TJ-v1-a",
+      pangolin: "PNG",
+      "lydia-finance": "LYD",
+      lydiafinance: "LYD",
+      "lydia-finance-avalanche": "LYD-a",
+      "sushiswap-avalanche": "SUSHI-a",
+      "uniswap-v3-avalanche": "UNI-v3-a",
+      "balancer-v2-avalanche": "BAL-v2-a",
+    };
+    if (map[dexFullLabel]) return map[dexFullLabel];
+    const compact = dexFullLabel.replace(/[^a-z0-9-]/g, "");
+    if (compact.length <= 10) return compact.toUpperCase();
+    return `${compact.slice(0, 9)}...`.toUpperCase();
+  }
+
+  const handleSelect = useCallback((p: TraxrScoreResult) => {
+    setSelectedPoolId(p.poolId);
+    requestAnimationFrame(() => {
+      document
+        .getElementById("traxr-selected-card")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }, []);
 
   if (!pools.length) {
     return (
@@ -169,8 +185,8 @@ export function TraxrDashboard({ pools }: Props) {
         </div>
       </div>
 
-      <div className="flex flex-col gap-4 rounded-3xl border border-white/10 bg-white/5 p-4 sm:p-5 lg:p-6 backdrop-blur">
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+      <div className="relative z-20 flex flex-col gap-4 rounded-3xl border border-white/10 bg-white/5 p-4 sm:p-5 lg:p-6 backdrop-blur">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:gap-4">
           <div>
             <div className="text-xs uppercase tracking-[0.26em] text-white/60">
               Select Pool
@@ -179,25 +195,27 @@ export function TraxrDashboard({ pools }: Props) {
               Token/pool list derived from TRAXR-AVAX cache
             </div>
           </div>
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search by pool id or token pair"
-            className="w-full rounded-full border border-white/20 bg-black/30 px-4 py-2 text-sm text-white outline-none ring-2 ring-transparent focus:border-cyan-400/60 focus:ring-cyan-400/30 lg:max-w-sm"
-          />
-          <PoolSelect
-            className="w-full lg:max-w-sm"
-            value={selected?.poolId || ""}
-            options={poolOptions}
-            onChange={(next) => setSelectedPoolId(next)}
-            placeholder="Select pool"
-          />
+          <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center lg:ml-auto lg:w-auto lg:flex-nowrap">
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search by pool id or token pair"
+              className="w-full rounded-full border border-white/20 bg-black/30 px-4 py-2 text-sm text-white outline-none ring-2 ring-transparent focus:border-cyan-400/60 focus:ring-cyan-400/30 sm:max-w-[280px] lg:w-[260px]"
+            />
+            <PoolSelect
+              className="w-full sm:min-w-[360px] lg:w-[520px] xl:w-[620px]"
+              value={selected?.poolId || ""}
+              options={poolOptions}
+              onChange={(next) => setSelectedPoolId(next)}
+              placeholder="Select pool"
+            />
+          </div>
         </div>
       </div>
 
       {selected ? (
         <>
-          <div id="traxr-selected-card">
+          <div id="traxr-selected-card" className="relative z-10">
             <TraxrPoolCard
               pool={selected}
               onCompare={() => setCompareOpen(true)}
@@ -205,7 +223,11 @@ export function TraxrDashboard({ pools }: Props) {
             />
           </div>
           <TraxrConsole pool={selected} />
-          <TraxrTrustMap pools={filtered} selected={selected} onSelect={handleSelect} />
+          <TraxrTrustMap
+            pools={filtered}
+            selected={selected}
+            onSelect={handleSelect}
+          />
           <div className="rounded-3xl border border-white/10 bg-white/5 p-6 text-white/90 shadow-[0_0_30px_rgba(0,0,0,0.35)]">
             <div className="mb-3 flex items-center justify-between">
               <div>

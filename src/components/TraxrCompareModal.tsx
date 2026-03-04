@@ -59,7 +59,7 @@ const metricOptions: MetricOption[] = [
   { key: "feePct", label: "Fee %", icon: FiPercent, description: "AMM trading fee percentage (lower is cheaper)." },
   { key: "concentration", label: "Concentration %", icon: FiActivity, description: "Raw liquidity concentration from snapshot." },
   { key: "volatilityImpact", label: "Volatility Impact %", icon: FiTarget, description: "Price impact proxy from 24h volume." },
-  { key: "warnings", label: "Warnings", icon: FiAlertTriangle, description: "Number of TRAXR warning flags." },
+  { key: "warnings", label: "Signals", icon: FiAlertTriangle, description: "Count of risk/info signals from CTS checks." },
   { key: "depth", label: "Depth", icon: FiLayers, description: "Liquidity depth normalization." },
   { key: "activity", label: "Activity", icon: FiZap, description: "Observed trading activity vs available depth." },
   { key: "impact", label: "Impact", icon: FiTarget, description: "Volatility impact proxy." },
@@ -225,6 +225,30 @@ function formatDexChipLabel(dex?: string) {
   return out;
 }
 
+function formatDexFullLabel(dex?: string) {
+  if (!dex) return "unknown-dex";
+  return dex.replace(/[_\s]+/g, "-").toLowerCase();
+}
+
+function formatDexShortLabel(dexFullLabel: string) {
+  const map: Record<string, string> = {
+    traderjoe: "TJ",
+    "traderjoe-v2-1-avalanche": "TJ-v2.1-a",
+    "traderjoe-v1-avalanche": "TJ-v1-a",
+    pangolin: "PNG",
+    "lydia-finance": "LYD",
+    lydiafinance: "LYD",
+    "lydia-finance-avalanche": "LYD-a",
+    "sushiswap-avalanche": "SUSHI-a",
+    "uniswap-v3-avalanche": "UNI-v3-a",
+    "balancer-v2-avalanche": "BAL-v2-a",
+  };
+  if (map[dexFullLabel]) return map[dexFullLabel];
+  const compact = dexFullLabel.replace(/[^a-z0-9-]/g, "");
+  if (compact.length <= 10) return compact.toUpperCase();
+  return `${compact.slice(0, 9)}...`.toUpperCase();
+}
+
 function pickOther(leftId: string | undefined, pools: TraxrScoreResult[], prefer?: string) {
   if (prefer && prefer !== leftId && pools.some((p) => p.poolId === prefer)) return prefer;
   return pools.find((p) => p.poolId !== leftId)?.poolId;
@@ -235,6 +259,15 @@ function metricWinner(left: number | null, right: number | null, direction: Dire
   if (left === right || direction === "neutral") return null;
   if (direction === "lower") return left < right ? "left" : "right";
   return left > right ? "left" : "right";
+}
+
+function formatLoserVsWinner(direction: Direction, loserPct: number | null) {
+  if (loserPct === null) return null;
+  if (direction === "lower") {
+    const multiple = loserPct / 100;
+    return `${multiple.toFixed(2)}x higher than winner`;
+  }
+  return `${loserPct.toFixed(2)}% of winner`;
 }
 
 function formatSourceSummary(points: TraxrTrendPoint[]) {
@@ -372,6 +405,7 @@ function MetricRow({
     winner === "right"
       ? "bg-gradient-to-r from-amber-400/80 to-amber-200/50"
       : "bg-gradient-to-r from-amber-500/35 to-amber-200/20";
+  const loserLabel = formatLoserVsWinner(direction, loserPct);
 
   return (
     <div className="grid gap-3 rounded-2xl border border-white/10 bg-white/5 p-3 grid-cols-[1fr_auto_1fr]">
@@ -381,9 +415,9 @@ function MetricRow({
           style={{ width: `${Math.max(0, Math.min(100, leftFill))}%` }}
         />
         <div className="relative z-10">{leftText}</div>
-        {winner === "right" && loserPct !== null ? (
+        {winner === "right" && loserLabel ? (
           <div className="relative z-10 mt-1 text-[10px] uppercase tracking-[0.14em] text-white/60">
-            {loserPct.toFixed(2)}% of winner
+            {loserLabel}
           </div>
         ) : null}
       </div>
@@ -426,9 +460,9 @@ function MetricRow({
           style={{ width: `${Math.max(0, Math.min(100, rightFill))}%` }}
         />
         <div className="relative z-10">{rightText}</div>
-        {winner === "left" && loserPct !== null ? (
+        {winner === "left" && loserLabel ? (
           <div className="relative z-10 mt-1 text-[10px] uppercase tracking-[0.14em] text-white/60">
-            {loserPct.toFixed(2)}% of winner
+            {loserLabel}
           </div>
         ) : null}
       </div>
@@ -685,14 +719,17 @@ export function TraxrCompareModal({ open, pools, initialLeftId, onClose }: Props
 
   const leftName = left ? poolLabel(left) : "Left pool";
   const rightName = right ? poolLabel(right) : "Right pool";
-  const leftDex = formatDexChipLabel((left?.metrics as any)?.dex);
-  const rightDex = formatDexChipLabel((right?.metrics as any)?.dex);
+  const leftDexFull = formatDexFullLabel((left?.metrics as any)?.dex);
+  const rightDexFull = formatDexFullLabel((right?.metrics as any)?.dex);
+  const leftDex = formatDexShortLabel(leftDexFull);
+  const rightDex = formatDexShortLabel(rightDexFull);
   const leftOptions = useMemo(
     () =>
       pools.map((p, idx) => ({
         value: p.poolId || `${idx}-${p.score}`,
         label: `${poolLabel(p)} | CTS ${p.ctsNodes}`,
-        dexLabel: formatDexChipLabel((p.metrics as any)?.dex),
+        dexLabel: formatDexShortLabel(formatDexFullLabel((p.metrics as any)?.dex)),
+        dexFullLabel: formatDexFullLabel((p.metrics as any)?.dex),
         disabled: p.poolId === rightId,
       })),
     [pools, rightId],
@@ -702,7 +739,8 @@ export function TraxrCompareModal({ open, pools, initialLeftId, onClose }: Props
       pools.map((p, idx) => ({
         value: p.poolId || `${idx}-${p.score}`,
         label: `${poolLabel(p)} | CTS ${p.ctsNodes}`,
-        dexLabel: formatDexChipLabel((p.metrics as any)?.dex),
+        dexLabel: formatDexShortLabel(formatDexFullLabel((p.metrics as any)?.dex)),
+        dexFullLabel: formatDexFullLabel((p.metrics as any)?.dex),
         disabled: p.poolId === leftId,
       })),
     [pools, leftId],
@@ -946,7 +984,7 @@ export function TraxrCompareModal({ open, pools, initialLeftId, onClose }: Props
                   <div className="text-[11px] uppercase tracking-[0.24em] text-white/60">Left pool</div>
                   <span
                     className="max-w-[110px] rounded-full border border-amber-400/40 bg-amber-500/10 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.18em] text-amber-100 truncate"
-                    title={(left?.metrics as any)?.dex || "unknown"}
+                    title={leftDexFull}
                   >
                     {leftDex}
                   </span>
@@ -979,7 +1017,7 @@ export function TraxrCompareModal({ open, pools, initialLeftId, onClose }: Props
                   <div className="text-[11px] uppercase tracking-[0.24em] text-white/60">Right pool</div>
                   <span
                     className="max-w-[110px] rounded-full border border-amber-400/40 bg-amber-500/10 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.18em] text-amber-100 truncate"
-                    title={(right?.metrics as any)?.dex || "unknown"}
+                    title={rightDexFull}
                   >
                     {rightDex}
                   </span>
@@ -1091,11 +1129,11 @@ export function TraxrCompareModal({ open, pools, initialLeftId, onClose }: Props
                 tooltip="Price impact proxy derived from 24h volume vs liquidity."
               />
               <MetricRow
-                label="Warnings"
+                label="Signals"
                 left={leftWarnings}
                 right={rightWarnings}
                 direction="lower"
-                tooltip="Number of risk warnings triggered by CTS signals."
+                tooltip="Count of risk and informational signals from CTS checks."
               />
             </div>
 
