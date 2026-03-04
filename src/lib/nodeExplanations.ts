@@ -107,6 +107,15 @@ export type Explanation = {
   body: string;
 };
 
+const NODE_LABELS: Record<keyof TraxrNodes, string> = {
+  depth: "Liquidity Depth",
+  activity: "Trading Activity",
+  impact: "Execution Resilience",
+  stability: "Fee Stability",
+  trust: "Contract Risk",
+  fee: "Dependencies",
+};
+
 /* --------------------------------------------------
  * Helpers
  * -------------------------------------------------- */
@@ -178,19 +187,19 @@ export function getLocalExplanation(
     },
     impact: {
       high: {
-        title: "Volatility Impact",
+        title: "Execution Resilience",
         body:
-          "Trades generally result in limited price movement.",
+          "Execution resilience is high; trades generally result in limited price movement.",
       },
       mid: {
-        title: "Volatility Impact",
+        title: "Execution Resilience",
         body:
-          "Typical trades are expected to cause moderate price movement.",
+          "Execution resilience is moderate; typical trades can cause moderate price movement.",
       },
       low: {
-        title: "Volatility Impact",
+        title: "Execution Resilience",
         body:
-          "Price is highly sensitive to trades due to pool structure.",
+          "Execution resilience is weak; price appears highly sensitive to trades.",
       },
     },
     stability: {
@@ -257,12 +266,12 @@ export const VALID_COMBINATIONS: Record<
   keyof TraxrNodes,
   (keyof TraxrNodes)[]
 > = {
-  depth: ["activity", "impact", "stability", "trust"],
+  depth: ["activity", "impact", "stability", "trust", "fee"],
   activity: ["depth", "impact", "stability", "trust", "fee"],
-  impact: ["depth", "activity", "stability"],
-  stability: ["depth", "activity", "impact"],
-  trust: ["depth", "activity"],
-  fee: ["activity"],
+  impact: ["depth", "activity", "stability", "trust", "fee"],
+  stability: ["depth", "activity", "impact", "trust", "fee"],
+  trust: ["depth", "activity", "impact", "stability", "fee"],
+  fee: ["depth", "activity", "impact", "stability", "trust"],
 };
 
 /* --------------------------------------------------
@@ -386,6 +395,116 @@ const PAIRS: Partial<Record<
   },
 };
 
+function buildPairFallbackExplanation(
+  a: keyof TraxrNodes,
+  b: keyof TraxrNodes,
+  nodes: TraxrNodes,
+): Explanation {
+  const ba = band(nodes[a]);
+  const bb = band(nodes[b]);
+  const aLabel = NODE_LABELS[a];
+  const bLabel = NODE_LABELS[b];
+
+  if (ba === "high" && bb === "high") {
+    return {
+      title: `${aLabel} + ${bLabel}`,
+      body: `Both ${aLabel.toLowerCase()} and ${bLabel.toLowerCase()} are strong. This points to a resilient profile for these two dimensions.`,
+    };
+  }
+
+  if (ba === "low" && bb === "low") {
+    return {
+      title: `${aLabel} + ${bLabel}`,
+      body: `Both ${aLabel.toLowerCase()} and ${bLabel.toLowerCase()} are weak. This combination indicates elevated structural sensitivity.`,
+    };
+  }
+
+  if (ba !== bb) {
+    const stronger = ba === "high" || (ba === "mid" && bb === "low") ? aLabel : bLabel;
+    const weaker = stronger === aLabel ? bLabel : aLabel;
+    return {
+      title: `${aLabel} vs ${bLabel}`,
+      body: `${stronger} is comparatively stronger while ${weaker} lags. The profile is mixed and may behave inconsistently under stress.`,
+    };
+  }
+
+  return {
+    title: `${aLabel} + ${bLabel}`,
+    body: `${aLabel} and ${bLabel} are in a similar mid-range band. Conditions are balanced but not strongly differentiated.`,
+  };
+}
+
+function buildSelectionValueNarrative(
+  selected: (keyof TraxrNodes)[],
+  nodes: TraxrNodes,
+): Explanation {
+  const ranked = [...selected].sort((x, y) => nodes[y] - nodes[x]);
+  const strongest = ranked[0];
+  const weakest = ranked[ranked.length - 1];
+  const spread = nodes[strongest] - nodes[weakest];
+  const highs = selected.filter((k) => band(nodes[k]) === "high").length;
+  const lows = selected.filter((k) => band(nodes[k]) === "low").length;
+
+  let profile = "balanced";
+  if (spread >= 45) profile = "highly uneven";
+  else if (spread >= 25) profile = "mixed";
+
+  const bandSummary =
+    highs >= Math.ceil(selected.length / 2)
+      ? "Most selected dimensions are in strong bands."
+      : lows >= Math.ceil(selected.length / 2)
+      ? "Most selected dimensions are in weak bands."
+      : "Selected dimensions are split between stronger and weaker bands.";
+
+  return {
+    title: "Value Profile",
+    body:
+      `${bandSummary} Dominant signal: ${NODE_LABELS[strongest]} (${nodes[strongest]}). ` +
+      `Limiting signal: ${NODE_LABELS[weakest]} (${nodes[weakest]}). ` +
+      `Spread across selected metrics is ${spread} points (${profile}).`,
+  };
+}
+
+function buildTripleOverlay(
+  selected: (keyof TraxrNodes)[],
+  nodes: TraxrNodes,
+): Explanation {
+  const ranked = [...selected].sort((x, y) => nodes[y] - nodes[x]);
+  const strongest = ranked[0];
+  const weakest = ranked[ranked.length - 1];
+  return {
+    title: "Dominant vs Limiting Signal",
+    body: `${NODE_LABELS[strongest]} is the strongest driver in this selection, while ${NODE_LABELS[weakest]} is the limiting dimension.`,
+  };
+}
+
+function buildMultiSelectionExplanation(
+  selected: (keyof TraxrNodes)[],
+  nodes: TraxrNodes,
+): Explanation {
+  const ranked = [...selected].sort((a, b) => nodes[b] - nodes[a]);
+  const high = ranked.filter((k) => band(nodes[k]) === "high");
+  const low = ranked.filter((k) => band(nodes[k]) === "low");
+  const topTwo = ranked.slice(0, 2).map((k) => NODE_LABELS[k]).join(" + ");
+  const bottomTwo = ranked
+    .slice(-2)
+    .reverse()
+    .map((k) => NODE_LABELS[k])
+    .join(" + ");
+
+  const balanceText =
+    high.length >= 3
+      ? "Most selected dimensions are in strong bands."
+      : low.length >= 3
+      ? "Most selected dimensions are in weak bands."
+      : "Selected dimensions are mixed between stronger and weaker bands.";
+
+  return {
+    title: "Multi-Signal Profile",
+    body: `${balanceText} Leading signals: ${topTwo}. Limiting signals: ${bottomTwo}.`,
+  };
+}
+
 /* --------------------------------------------------
  * 4. TRIPLE EXPLANATIONS (3 metrics)
  * -------------------------------------------------- */
@@ -430,7 +549,11 @@ export function getContextualExplanationForSelection(
   if (selected.length === 3) {
     const key = tripleKey(selected[0], selected[1], selected[2]);
     const archetype = TRIPLE_ARCHETYPES[key] ?? "STRUCTURAL";
-    return [TRIPLE_ARCHETYPE_EXPLANATIONS[archetype]];
+    return [
+      TRIPLE_ARCHETYPE_EXPLANATIONS[archetype],
+      buildTripleOverlay(selected, nodes),
+      buildSelectionValueNarrative(selected, nodes),
+    ];
   }
 
   // 2-metric
@@ -447,13 +570,31 @@ export function getContextualExplanationForSelection(
         const v1 = band(nodes[first]);
         const v2 = band(nodes[second]);
         const entry = map[`${v1}_${v2}` as PairBandKey];
-        if (entry) return [entry];
+        if (entry) {
+          return [
+            entry,
+            buildPairFallbackExplanation(a, b, nodes),
+            buildSelectionValueNarrative(selected, nodes),
+          ];
+        }
       }
     }
 
     // Fallback to archetype explanation
     const archetype = PAIR_ARCHETYPES[key] ?? "STRUCTURAL";
-    return [ARCHETYPE_EXPLANATIONS[archetype]];
+    return [
+      ARCHETYPE_EXPLANATIONS[archetype],
+      buildPairFallbackExplanation(a, b, nodes),
+      buildSelectionValueNarrative(selected, nodes),
+    ];
+  }
+
+  // 4+ metrics
+  if (selected.length >= 4) {
+    return [
+      buildMultiSelectionExplanation(selected, nodes),
+      buildSelectionValueNarrative(selected, nodes),
+    ];
   }
 
   // Fallback (never empty)

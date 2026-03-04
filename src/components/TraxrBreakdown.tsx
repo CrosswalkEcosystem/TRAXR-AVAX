@@ -8,7 +8,7 @@ type Props = {
 const labels: Record<keyof TraxrNodeBreakdown, string> = {
   depth: "Liquidity Depth",
   activity: "Trading Activity",
-  impact: "Volatility Impact",
+  impact: "Execution Resilience",
   stability: "Fee Stability",
   trust: "Contract Risk",
   fee: "Dependencies",
@@ -17,7 +17,7 @@ const labels: Record<keyof TraxrNodeBreakdown, string> = {
 const descriptions: Record<keyof TraxrNodeBreakdown, string> = {
   depth: "Estimated depth available for swaps",
   activity: "Observed usage relative to available liquidity",
-  impact: "Price sensitivity under trade pressure",
+  impact: "Lower sensitivity under trade pressure (higher is better)",
   stability: "Fee consistency over time",
   trust: "Proxy/upgradeability/admin controls",
   fee: "Protocol dependency flags",
@@ -26,7 +26,7 @@ const descriptions: Record<keyof TraxrNodeBreakdown, string> = {
 const detailTitles: Record<keyof TraxrNodeBreakdown, string> = {
   depth: "Liquidity Depth",
   activity: "Trading Activity",
-  impact: "Volatility Impact",
+  impact: "Execution Resilience",
   stability: "Fee Stability",
   trust: "Contract Risk",
   fee: "Dependencies",
@@ -38,7 +38,7 @@ const detailBodies: Record<keyof TraxrNodeBreakdown, string> = {
   activity:
     "Measures observed usage (volume and transactions) relative to available depth. Higher means healthier real usage.",
   impact:
-    "Estimates sensitivity to trade pressure. Higher TRAXR node means lower expected disruption from trading flow.",
+    "Estimates execution resilience under trade pressure. Higher node means lower expected price disruption from trade flow.",
   stability:
     "Reflects fee behavior consistency. Higher means fee conditions are more predictable across snapshots.",
   trust:
@@ -80,10 +80,18 @@ export function TraxrBreakdown({ nodes }: Props) {
                       onClick={() =>
                         setActiveInfo(key as keyof TraxrNodeBreakdown)
                       }
-                      className="flex h-4 w-4 items-center justify-center rounded-full border border-white/20 bg-white/5 text-[9px] font-semibold text-white/70 transition hover:border-cyan-300/50 hover:text-cyan-100"
+                      className="group flex h-[18px] w-[18px] items-center justify-center text-white/85 transition hover:text-white"
                       aria-label={`Explain ${labels[key as keyof TraxrNodeBreakdown]}`}
                     >
-                      i
+                      <svg
+                        viewBox="0 0 24 24"
+                        className="h-[15px] w-[15px]"
+                        aria-hidden="true"
+                      >
+                        <circle cx="12" cy="12" r="9" fill="#ffffff" stroke="#111111" strokeWidth="1.5" />
+                        <path d="M12 10.2V16" stroke="#111111" strokeWidth="1.8" strokeLinecap="round" />
+                        <circle cx="12" cy="7.4" r="1.2" fill="#111111" />
+                      </svg>
                     </button>
                   </div>
                   <div className="text-xs text-white/50">
