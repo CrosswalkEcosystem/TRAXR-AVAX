@@ -38,7 +38,7 @@ export default function ArchitecturePage() {
               TRAXR-AVAX Architecture
             </h1>
             <p className="mt-4 text-slate-400 text-sm tracking-wide">
-              Indexed AVAX data, deterministic normalization, and decoupled scoring.
+              Avalanche-first ingestion, deterministic normalization, and pool-level risk distribution via API/UI.
             </p>
 
             <section className="mt-12">
@@ -46,9 +46,9 @@ export default function ArchitecturePage() {
                 Architectural Overview
               </h2>
               <p className="mt-3 text-slate-300">
-                TRAXR-AVAX is a read-only indexing layer for AVAX pools. It
-                prioritizes correctness, reproducibility, and explicit separation
-                between raw data and scoring logic.
+                TRAXR-AVAX is a read-only risk infrastructure layer for AVAX pools.
+                It is designed to keep data lineage explicit, keep scoring deterministic,
+                and make pool-level risk context easy to consume by wallets and DEXs.
               </p>
             </section>
 
@@ -61,9 +61,10 @@ export default function ArchitecturePage() {
 
               <ol className="mt-4 space-y-4 text-slate-300 list-decimal pl-5">
                 <li>
-                  <b>GeckoTerminal Ingestion</b>
+                  <b>Avalanche RPC Ingestion</b>
                   <div className="text-slate-400 text-sm mt-1">
-                    Pool identifiers, token metadata, liquidity, volume, and DEX attribution.
+                    Protocol-specific discovery from Avalanche C-Chain logs/state:
+                    pool identifiers, token metadata, liquidity, volume, and DEX attribution.
                   </div>
                 </li>
 
@@ -85,10 +86,19 @@ export default function ArchitecturePage() {
                 <li>
                   <b>Presentation & Distribution</b>
                   <div className="text-slate-400 text-sm mt-1">
-                    Scores and warnings are surfaced via the UI and read-only API.
+                    Scores and signals are surfaced via the UI and read-only API for integrators.
                   </div>
                 </li>
               </ol>
+            </section>
+
+            <section className="mt-10 rounded-md border border-cyan-300/25 bg-cyan-400/5 p-4">
+              <h2 className="text-lg sm:text-xl font-medium">Avalanche-First Positioning</h2>
+              <ul className="mt-3 list-disc space-y-1 pl-5 text-slate-300">
+                <li>Primary ingestion is Avalanche C-Chain RPC.</li>
+                <li>Legacy Gecko snapshots are used only for baseline parity checks and migration transparency.</li>
+                <li>Trend/Compare views explicitly segment historical sources.</li>
+              </ul>
             </section>
 
             <section className="mt-10 rounded-md border border-white/10 bg-white/5 p-4">
@@ -107,22 +117,23 @@ export default function ArchitecturePage() {
                 Current Alpha Architecture
               </h2>
               <ul className="mt-3 list-disc pl-5 text-slate-300 space-y-1">
-                <li>Snapshot-based ingestion from GeckoTerminal</li>
+                <li>Snapshot-based ingestion from Avalanche C-Chain RPC</li>
                 <li>Local JSON cache for repeatable runs</li>
                 <li>Derived heuristics marked as best-effort</li>
                 <li>Scoring logic isolated in npm package</li>
+                <li>Legacy Gecko snapshots retained for explicit parity comparison</li>
               </ul>
             </section>
 
             <section className="mt-10">
               <h2 className="text-lg sm:text-xl font-medium">
-                Roadmap (Optional)
+                Roadmap
               </h2>
               <ul className="mt-4 list-disc pl-5 text-slate-300 space-y-2">
-                <li>On-chain pool address resolution</li>
-                <li>Protocol-specific contract decoding</li>
-                <li>Historical snapshots for trend analysis</li>
-                <li>Cross-chain expansion</li>
+                <li>Self-hosted Avalanche node for primary data plane reliability.</li>
+                <li>Smarter indexer for faster and broader deterministic pool coverage.</li>
+                <li>Deeper on-chain contract/admin/dependency signal coverage.</li>
+                <li>Integration-ready API distribution for wallets and DEXs.</li>
               </ul>
             </section>
 
@@ -165,6 +176,9 @@ export default function ArchitecturePage() {
             </a>
             <a href="/methodology" className="hover:text-white">
               Methodology
+            </a>
+            <a href="/scoring-overview" className="hover:text-white">
+              Scoring overview
             </a>
             <a href="/api-preview" className="hover:text-white">
               API (preview)

@@ -118,6 +118,13 @@ export default function Home() {
                   </a>
                   <span className="hidden text-white/40 sm:inline">|</span>
                   <a
+                    href="/scoring-overview"
+                    className="underline decoration-dashed underline-offset-4 decoration-white/40 hover:decoration-cyan-300 transition"
+                  >
+                    Scoring overview
+                  </a>
+                  <span className="hidden text-white/40 sm:inline">|</span>
+                  <a
                     href="/architecture"
                     className="underline decoration-dashed underline-offset-4 decoration-white/40 hover:decoration-cyan-300 transition"
                   >
@@ -195,6 +202,9 @@ export default function Home() {
             </a>
             <a href="/methodology" className="hover:text-white">
               Methodology
+            </a>
+            <a href="/scoring-overview" className="hover:text-white">
+              Scoring overview
             </a>
             <a href="/architecture" className="hover:text-white">
               Architecture

@@ -1,114 +1,76 @@
-export default function TraxrArchitectureLoop() {
-  const nodes = [
-    { label: "AVAX C-Chain", x: 250, y: 40 },
-    { label: "GeckoTerminal", x: 420, y: 140 },
-    { label: "Normalization", x: 340, y: 300 },
-    { label: "Scoring (npm)", x: 160, y: 300 },
-    { label: "API + UI", x: 80, y: 140 },
-  ];
+export default function TraxrArchitectureFlow() {
+  return (
+    <div className="mt-10 w-full">
+      <div className="grid gap-3 md:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr] md:items-center">
+        <Node
+          title="Avalanche C-Chain RPC"
+          subtitle="Primary source"
+          tone="cyan"
+        />
+        <Arrow />
+        <Node
+          title="Normalization"
+          subtitle="Deterministic schema"
+          tone="blue"
+        />
+        <Arrow />
+        <Node
+          title="Scoring (npm)"
+          subtitle="@crosswalk.pro/traxr-cts-avax"
+          tone="emerald"
+        />
+        <Arrow />
+        <Node
+          title="API + UI"
+          subtitle="Read-only distribution"
+          tone="violet"
+        />
+      </div>
+
+      <div className="mt-4 rounded-2xl border border-amber-300/30 bg-amber-400/5 p-3 text-xs text-amber-100/90">
+        <span className="font-semibold uppercase tracking-[0.14em]">Baseline Verification</span>
+        <span className="mx-2 text-amber-200/60">|</span>
+        GeckoTerminal snapshots are retained for parity checks and source-segmented trend history, not as primary ingestion.
+      </div>
+
+      <p className="mt-3 text-center text-xs text-slate-400">
+        Read-only architecture. No signing. No custody. Explicit provenance.
+      </p>
+    </div>
+  );
+}
+
+function Arrow() {
+  return (
+    <div className="hidden md:flex items-center justify-center text-cyan-200/70">
+      <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
+        <path d="M4 12h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+        <path d="m13 7 6 5-6 5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </div>
+  );
+}
+
+function Node({
+  title,
+  subtitle,
+  tone,
+}: {
+  title: string;
+  subtitle: string;
+  tone: "cyan" | "blue" | "emerald" | "violet";
+}) {
+  const tones: Record<typeof tone, string> = {
+    cyan: "border-cyan-300/40 bg-cyan-400/10",
+    blue: "border-sky-300/35 bg-sky-400/10",
+    emerald: "border-emerald-300/35 bg-emerald-400/10",
+    violet: "border-indigo-300/35 bg-indigo-400/10",
+  };
 
   return (
-    <div className="mt-12 w-full">
-      <svg
-        viewBox="0 0 500 380"
-        className="w-full max-w-[520px] mx-auto"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <defs>
-          <radialGradient id="centerGlow">
-            <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.25" />
-            <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
-          </radialGradient>
-
-          <filter id="softGlow">
-            <feGaussianBlur stdDeviation="6" />
-          </filter>
-        </defs>
-
-        <circle
-          cx="250"
-          cy="190"
-          r="120"
-          fill="none"
-          stroke="#38bdf8"
-          strokeOpacity="0.25"
-          strokeWidth="2"
-          strokeDasharray="6 6"
-        />
-
-        <path
-          d="M250 70 A120 120 0 1 1 249 70"
-          fill="none"
-          stroke="#38bdf8"
-          strokeOpacity="0.4"
-          strokeWidth="2"
-          markerEnd="url(#arrow)"
-        />
-
-        <defs>
-          <marker
-            id="arrow"
-            markerWidth="6"
-            markerHeight="6"
-            refX="5"
-            refY="3"
-            orient="auto"
-          >
-            <path d="M0,0 L6,3 L0,6 Z" fill="#38bdf8" />
-          </marker>
-        </defs>
-
-        <circle cx="250" cy="190" r="58" fill="url(#centerGlow)" />
-        <text
-          x="250"
-          y="182"
-          textAnchor="middle"
-          fill="#e5e7eb"
-          fontSize="12"
-          fontWeight="600"
-        >
-          TRAXR CORE
-        </text>
-        <text
-          x="250"
-          y="198"
-          textAnchor="middle"
-          fill="#94a3b8"
-          fontSize="10"
-        >
-          Read-only - Deterministic
-        </text>
-
-        {nodes.map((n, i) => (
-          <g key={i}>
-            <rect
-              x={n.x - 55}
-              y={n.y - 20}
-              rx="12"
-              ry="12"
-              width="110"
-              height="40"
-              fill="rgba(56,189,248,0.08)"
-              stroke="#38bdf8"
-              strokeOpacity="0.6"
-              filter="url(#softGlow)"
-            />
-            <text
-              x={n.x}
-              y={n.y + 4}
-              textAnchor="middle"
-              fill="#e5e7eb"
-              fontSize="11"
-            >
-              {n.label}
-            </text>
-          </g>
-        ))}
-      </svg>
-
-      <p className="mt-4 text-center text-xs text-slate-400">
-        Continuous read-only architecture - no signing - no custody
-      </p>
+    <div className={`rounded-2xl border px-4 py-3 ${tones[tone]}`}>
+      <div className="text-sm font-semibold text-white">{title}</div>
+      <div className="mt-1 text-xs text-white/70">{subtitle}</div>
     </div>
   );
 }

@@ -8,13 +8,14 @@ Indexing never guesses. Scoring never rewrites facts.
 
 ## Layered System
 ### Layer 1 - Indexed Market & Protocol Data (Live, Verifiable)
-- Source: GeckoTerminal pool data
+- Source: Avalanche C-Chain RPC (native)
 - Outputs: pool identifiers, token metadata, liquidity, volume, DEX attribution
 - Source-backed, reproducible, and high-confidence
+- GeckoTerminal is retained as an explicit comparison/verification source
 
 ### Layer 2 - Derived Heuristics (Computed, Best-Effort)
 - Liquidity depth
-- Volatility impact
+- Execution resilience (derived from impact behavior)
 - Fee tier estimates (when inferable)
 - Marked as derived and non-authoritative
 
@@ -26,7 +27,8 @@ Indexing never guesses. Scoring never rewrites facts.
 
 ## Core Pipeline
 1. **Data Ingestion**
-   - Snapshot-based ingestion from GeckoTerminal
+   - Snapshot-based ingestion from Avalanche RPC using protocol-specific adapters
+   - Chunked/block-range RPC log scanning with retries
    - AVAX C-Chain pools only
 
 2. **Normalization**
@@ -38,13 +40,16 @@ Indexing never guesses. Scoring never rewrites facts.
    - Pure, deterministic scoring logic
 
 4. **Presentation**
-   - Next.js UI for CTS nodes, breakdowns, warnings
+   - Next.js UI for CTS nodes, breakdowns, signals, trend/compare, and TRAXR Console interpretation panels
+   - Trend/Compare explicitly segment historical sources (GeckoTerminal vs Avalanche RPC) for visible provenance
    - Read-only API under `/api/traxr/*`
 
 ## Transparency Rules
 - Unknown values are intentional and explicit
 - Derived metrics are labeled as heuristic
 - Source-backed values are never overwritten
+- Signal naming in UI is user-facing (`Signals` with `Risk`/`Info`), payload remains backward-compatible
+- Legacy Gecko snapshots may be retained for comparison; source transitions are shown visually in charts
 
 ## Alpha Constraints
 - No full indexer
@@ -53,7 +58,7 @@ Indexing never guesses. Scoring never rewrites facts.
 - Limited on-chain resolution
 
 ## Future (Optional)
-- On-chain pool address resolution
-- Protocol-specific contract decoding
-- Snapshot trend history
+- Broader protocol adapter coverage
+- Deeper contract/admin provenance coverage
+- Snapshot trend and comparison refinement
 - Cross-chain aggregation

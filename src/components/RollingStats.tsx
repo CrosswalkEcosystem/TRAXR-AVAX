@@ -66,8 +66,10 @@ export function RollingStats({
     warnings?: string[];
     score?: number;
     poolAddress?: string;
+    dex?: string;
     metrics?: {
       poolAddress?: string;
+      dex?: string;
     };
   }[];
 }) {
@@ -93,13 +95,19 @@ export function RollingStats({
       .filter(Boolean),
   ).size;
 
+  const dexCount = new Set(
+    pools
+      .map((p) => p.dex ?? p.metrics?.dex)
+      .filter((v): v is string => typeof v === "string" && v.length > 0),
+  ).size;
+
   const items = [
     {
       key: "pools",
       label: "Pools",
       value: totalPools,
       description:
-        "AVAX pools included in the current indexed snapshot (source-backed, not full network coverage).",
+        "AVAX pools in the current post-filter snapshot (source-backed, not full network coverage).",
     },
     {
       key: "signals",
@@ -133,7 +141,7 @@ export function RollingStats({
       </div>
 
       <div className="mt-2 text-center text-[9px] sm:text-[10px] text-white/45">
-        Snapshot of ~{totalPools.toLocaleString()} pools | AVAX C-Chain | Indexed + normalized data
+        Current filtered snapshot: {totalPools.toLocaleString()} pools ({dexCount} DEXs enabled)
       </div>
 
       <div className="mt-3 flex justify-center">

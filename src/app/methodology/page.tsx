@@ -4,7 +4,7 @@ import BackButton from "@/components/BackButton";
 export const metadata = {
   title: "How TRAXR-AVAX Works - Methodology",
   description:
-    "Transparent overview of TRAXR-AVAX indexing, normalization, and decoupled scoring.",
+    "Avalanche-first methodology for deterministic pool-level risk indexing, normalization, and scoring.",
 };
 
 export default function MethodologyPage() {
@@ -33,179 +33,99 @@ export default function MethodologyPage() {
               </span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">
-              How TRAXR-AVAX Works
+            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+              Avalanche-First Deterministic Risk Methodology
             </h1>
-            <p className="mt-4 text-slate-400 text-sm tracking-wide">
-              Pool & Contract Risk Intelligence (Alpha)
+            <p className="mt-4 text-sm tracking-wide text-slate-400">
+              Pool-level risk intelligence from on-chain-native data, normalized and reproducible.
             </p>
 
             <section className="mt-12">
-              <h2 className="text-lg sm:text-xl font-medium">What TRAXR-AVAX Is</h2>
+              <h2 className="text-lg font-medium sm:text-xl">Method Goal</h2>
               <p className="mt-3 text-slate-300">
-                TRAXR-AVAX is a foundational indexing and normalization layer for
-                AVAX DeFi data. It ingests pool data from GeckoTerminal, normalizes
-                it into a stable schema, and exposes a clean substrate for downstream
-                scoring and analysis.
+                TRAXR-AVAX provides a deterministic pool-risk layer for Avalanche.
+                The objective is not prediction; it is transparent interpretation of
+                current pool structure and contract posture from source-backed data.
               </p>
             </section>
 
             <section className="mt-10">
-              <h2 className="text-lg sm:text-xl font-medium">Layered Architecture</h2>
-              <ul className="mt-4 space-y-2 text-slate-300">
-                <li>
-                  <b>Layer 1 - Indexed Data</b>: source-backed pool metadata,
-                  token info, liquidity, volume, DEX attribution.
-                </li>
-                <li>
-                  <b>Layer 2 - Derived Heuristics</b>: computed, best-effort
-                  metrics like depth and volatility impact.
-                </li>
-                <li>
-                  <b>Layer 3 - Risk Signals</b>: contract risk, fee stability,
-                  liquidity concentration resolved by a separate scoring engine.
-                </li>
+              <h2 className="text-lg font-medium sm:text-xl">Data Source Policy</h2>
+              <ul className="mt-4 list-disc space-y-1 pl-5 text-slate-300">
+                <li>Primary source: Avalanche C-Chain RPC (native on-chain reads/logs).</li>
+                <li>Legacy Gecko snapshots are retained as baseline comparison data.</li>
+                <li>Trend/Compare explicitly show source segmentation for provenance transparency.</li>
               </ul>
             </section>
 
             <section className="mt-10">
-              <h2 className="text-lg sm:text-xl font-medium">
-                Why Pools, Not Tokens
-              </h2>
-              <p className="mt-3 text-slate-300">
-                Risk in AMM environments emerges from liquidity depth, LP
-                concentration, fee dynamics, and contract control. Pool-centric
-                analysis surfaces where risk actually manifests.
-              </p>
+              <h2 className="text-lg font-medium sm:text-xl">Deterministic Pipeline</h2>
+              <ol className="mt-4 list-decimal space-y-3 pl-5 text-slate-300">
+                <li>
+                  Discovery per DEX adapter using protocol-specific events/state.
+                </li>
+                <li>
+                  Normalization into stable schema (`dataSource`, `addressSource`, pool/token fields, metrics).
+                </li>
+                <li>
+                  Scoring delegation to external npm engine (`@crosswalk.pro/traxr-cts-avax`).
+                </li>
+                <li>
+                  Distribution via read-only API/UI with explicit `Signals` semantics.
+                </li>
+              </ol>
             </section>
 
             <section className="mt-10 rounded-md border border-white/10 bg-white/5 p-4">
-              <h2 className="text-lg sm:text-xl font-medium">
-                What TRAXR-AVAX Is Not
-              </h2>
+              <h2 className="text-lg font-medium sm:text-xl">Scoring Semantics</h2>
+              <p className="mt-3 text-slate-300">
+                Node outputs are normalized to `0-100` where higher means better posture.
+                For example, <span className="text-slate-100">Execution Resilience</span> is
+                positive quality: higher indicates lower expected disruption under trade pressure.
+              </p>
+              <p className="mt-2 text-slate-300">
+                Public scoring principles are documented in{" "}
+                <a href="/scoring-overview" className="underline decoration-dashed underline-offset-4 decoration-white/40 hover:decoration-cyan-300 transition">
+                  Scoring Overview
+                </a>.
+              </p>
+            </section>
+
+            <section className="mt-10 rounded-md border border-cyan-400/20 bg-cyan-400/5 p-4">
+              <h2 className="text-lg font-medium sm:text-xl">MVP Scope</h2>
               <ul className="mt-3 list-disc space-y-1 pl-5 text-slate-300">
-                <li>Not financial or investment advice</li>
-                <li>Not a price prediction or yield forecast</li>
-                <li>Not a trading interface or portfolio tracker</li>
+                <li>Avalanche-native snapshot fetcher (adapter-based).</li>
+                <li>Deterministic normalization + pool-level scoring outputs.</li>
+                <li>UI/API for pool, trend, compare, signals, and interpretation.</li>
               </ul>
             </section>
 
-            <section className="mt-10">
-              <h2 className="text-lg sm:text-xl font-medium">
-                Scoring Engine (npm)
-              </h2>
-              <p className="mt-3 text-slate-300">
-                TRAXR-AVAX scoring is handled by a separate npm package. It
-                consumes normalized pool data and produces CTS nodes, scores,
-                and warnings without modifying the indexed facts.
-              </p>
-              <p className="mt-2 text-slate-300">
-                Package: <span className="text-slate-100">@crosswalk.pro/traxr-cts-avax</span>
-              </p>
-            </section>
-
-            <section className="mt-10">
-              <h2 className="text-lg sm:text-xl font-medium">
-                TRAXR-AVAX Score
-              </h2>
-              <p className="mt-3 text-slate-300">
-                Each pool receives a score (0-100) mapped to a 1-6 CTS tier.
-                Scores are relative, deterministic within the dataset, and
-                computed by the scoring engine.
-              </p>
-            </section>
-
-            <section className="mt-10">
-              <h2 className="text-lg sm:text-xl font-medium">
-                Scoring Dimensions
-              </h2>
-              <ul className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 text-slate-300">
-                <li>
-                  <span className="font-medium text-slate-200">
-                    Liquidity Depth
-                  </span>{" "}
-                  - estimated reserves and resilience
-                </li>
-                <li>
-                  <span className="font-medium text-slate-200">
-                    Concentration
-                  </span>{" "}
-                  - LP dominance proxy
-                </li>
-                <li>
-                  <span className="font-medium text-slate-200">
-                    Volatility Impact
-                  </span>{" "}
-                  - price sensitivity proxy
-                </li>
-                <li>
-                  <span className="font-medium text-slate-200">
-                    Fee Stability
-                  </span>{" "}
-                  - fee change consistency
-                </li>
-                <li>
-                  <span className="font-medium text-slate-200">
-                    Contract Risk
-                  </span>{" "}
-                  - proxy, upgradeability, admin controls
-                </li>
-                <li>
-                  <span className="font-medium text-slate-200">
-                    Dependencies
-                  </span>{" "}
-                  - incentives or emissions flags
-                </li>
+            <section className="mt-10 rounded-md border border-amber-400/25 bg-amber-400/5 p-4">
+              <h2 className="text-lg font-medium sm:text-xl">Next Build Focus</h2>
+              <ul className="mt-3 list-disc space-y-1 pl-5 text-slate-300">
+                <li>Self-hosted Avalanche node as primary data plane.</li>
+                <li>Smarter/faster indexer profiles for high-frequency refresh.</li>
+                <li>Deeper contract/admin/dependency signal coverage.</li>
+                <li>Integration-ready API distribution for wallets and DEXs.</li>
               </ul>
             </section>
 
-            <section className="mt-8 rounded-md border border-cyan-400/20 bg-cyan-400/5 p-4">
-              <h3 className="text-sm font-medium uppercase tracking-[0.2em] text-cyan-300">
-                Transparency Notes
-              </h3>
-              <p className="mt-2 text-sm text-slate-300">
-                Derived metrics are best-effort. When deeper on-chain resolution
-                is required, values are explicitly shown as "Unknown" until the
-                scoring engine resolves them.
-              </p>
-            </section>
-
-            <section className="mt-10 rounded-lg border border-yellow-400/30 bg-yellow-400/5 p-5">
-              <h2 className="text-base sm:text-lg font-medium text-yellow-300">
-                Current Alpha Data Model
-              </h2>
-              <p className="mt-3 text-slate-300">
-                The current alpha operates on GeckoTerminal snapshots cached in
-                JSON files and refreshed manually.
-              </p>
-              <p className="mt-2 text-slate-300">
-                This approach prioritizes correctness and transparency over
-                perceived real-time behavior.
-              </p>
-            </section>
-
-            <section className="mt-10">
-              <h2 className="text-lg sm:text-xl font-medium">
-                Roadmap (Optional)
-              </h2>
-              <p className="mt-3 text-slate-300">
-                The roadmap progresses from indexing, to on-chain resolution,
-                to expanded scoring, then cross-chain aggregation.
-              </p>
+            <section className="mt-10 rounded-md border border-white/10 bg-white/5 p-4">
+              <h2 className="text-lg font-medium sm:text-xl">What TRAXR-AVAX Is Not</h2>
+              <ul className="mt-3 list-disc space-y-1 pl-5 text-slate-300">
+                <li>Not financial advice.</li>
+                <li>Not a trading execution interface.</li>
+                <li>Not custody/signing infrastructure.</li>
+              </ul>
             </section>
 
             <p className="mt-12 text-xs text-slate-500">
-              Alpha mode: data is refreshed periodically for demonstration
-              purposes. Real-time indexing is not enabled.
+              Methodology is intentionally explicit so outputs remain auditable and reproducible.
             </p>
 
             <div className="mt-14">
               <BackButton />
             </div>
-
-            <p className="mt-8 text-sm text-slate-500">
-              Know your data. Know your risk.
-            </p>
           </div>
         </section>
 
@@ -221,6 +141,9 @@ export default function MethodologyPage() {
             </a>
             <a href="/architecture" className="hover:text-white">
               Architecture
+            </a>
+            <a href="/scoring-overview" className="hover:text-white">
+              Scoring overview
             </a>
             <a href="/api-preview" className="hover:text-white">
               API (preview)

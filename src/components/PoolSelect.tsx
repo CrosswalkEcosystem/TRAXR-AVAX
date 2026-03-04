@@ -152,7 +152,7 @@ export function PoolSelect({
           className={`shrink-0 text-[10px] text-white/70 transition ${open ? "rotate-180" : ""}`}
           aria-hidden="true"
         >
-          ▲
+          ▼
         </span>
       </button>
 

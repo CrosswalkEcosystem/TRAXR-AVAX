@@ -95,7 +95,7 @@ export default function DataModelPage() {
               </h2>
               <p className="mt-3 text-slate-300">
                 From core entities, TRAXR-AVAX derives normalized heuristics
-                such as liquidity depth and volatility impact. These are marked
+                such as liquidity depth, concentration, and execution resilience context. These are marked
                 as best-effort and never presented as protocol guarantees.
               </p>
             </section>
@@ -116,16 +116,17 @@ export default function DataModelPage() {
                 Current Alpha Data Model
               </h2>
               <ul className="mt-3 list-disc pl-5 text-slate-300 space-y-1">
-                <li>GeckoTerminal snapshots cached in JSON</li>
-                <li>Manual refresh cycle for validation</li>
+                <li>Avalanche RPC snapshots cached in JSON</li>
+                <li>Manual/operational refresh cycle for validation</li>
                 <li>Deterministic normalization over cached state</li>
                 <li>Scoring handled by npm package</li>
+                <li>Legacy Gecko snapshots retained for transparent comparison</li>
               </ul>
             </section>
 
             <section className="mt-10">
               <h2 className="text-lg sm:text-xl font-medium">
-                Evolution (Optional)
+                Evolution
               </h2>
               <p className="mt-3 text-slate-300">
                 The target data model can evolve toward continuous indexing and
@@ -160,6 +161,9 @@ export default function DataModelPage() {
             </a>
             <a href="/methodology" className="hover:text-white">
               Methodology
+            </a>
+            <a href="/scoring-overview" className="hover:text-white">
+              Scoring overview
             </a>
             <a href="/architecture" className="hover:text-white">
               Architecture
