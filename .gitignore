@@ -54,3 +54,4 @@ data/avaxPools_rpc_pangolin_test_2026-02-26T223000624Z.json
 scripts/legacy/
 data/test/
 data/avaxDexCoverage_*.json
+/AUTO-FETCH/
