@@ -85,13 +85,14 @@ async function discoverPools(ctx, dex, latestBlock) {
 
   const candidateTarget = Math.max(config.topPoolsPerDex, config.topPoolsPerDex * config.candidateMultiplier);
   return [...poolMap.values()]
+    .filter((item) => Number(item.eventBlock || 0) <= latestBlock)
     .sort((a, b) => Number(b.eventBlock || 0) - Number(a.eventBlock || 0))
     .slice(0, candidateTarget);
 }
 
 async function enrichPool(ctx, pool, tokenCache) {
   const { Contract, balancerVaultAbi, withRetry, getTokenMeta, toNumber } = ctx;
-  const vault = new Contract(pool.vaultAddress, balancerVaultAbi, ctx.provider);
+  const vault = new Contract(pool.vaultAddress, balancerVaultAbi, ctx.activeProvider || ctx.provider);
 
   const poolTokens = await withRetry(
     () => vault.getPoolTokens(pool.poolId),
@@ -104,7 +105,7 @@ async function enrichPool(ctx, pool, tokenCache) {
     throw new Error("balancer pool has fewer than 2 tokens");
   }
 
-  const metas = await Promise.all(tokens.map((addr) => getTokenMeta(ctx.provider, addr, tokenCache)));
+  const metas = await Promise.all(tokens.map((addr) => getTokenMeta(ctx.activeProvider || ctx.provider, addr, tokenCache)));
   const rows = metas.map((meta, i) => ({
     address: meta.address,
     name: meta.name,

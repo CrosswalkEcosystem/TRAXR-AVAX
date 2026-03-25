@@ -1,6 +1,6 @@
 async function discoverPools(ctx, dex, latestBlock) {
   const { Contract, v2FactoryAbi, withRetry, choosePairIndices, config, log, constants } = ctx;
-  const factory = new Contract(dex.factoryAddress, v2FactoryAbi, ctx.provider);
+  const factory = new Contract(dex.factoryAddress, v2FactoryAbi, ctx.activeProvider || ctx.provider);
 
   const total = Number(await withRetry(() => factory.allPairsLength(), `${dex.dexId}.allPairsLength`));
   const candidateTarget = Math.min(
@@ -38,7 +38,7 @@ async function discoverPools(ctx, dex, latestBlock) {
 
 async function enrichPool(ctx, pool, tokenCache) {
   const { Contract, v2PairAbi, withRetry, getTokenMeta, toNumber } = ctx;
-  const pair = new Contract(pool.poolAddress, v2PairAbi, ctx.provider);
+  const pair = new Contract(pool.poolAddress, v2PairAbi, ctx.activeProvider || ctx.provider);
 
   const [token0Address, token1Address, reserves] = await Promise.all([
     withRetry(() => pair.token0(), `${pool.dexId}.token0 ${pool.poolAddress}`),
@@ -47,8 +47,8 @@ async function enrichPool(ctx, pool, tokenCache) {
   ]);
 
   const [token0, token1] = await Promise.all([
-    getTokenMeta(ctx.provider, token0Address, tokenCache),
-    getTokenMeta(ctx.provider, token1Address, tokenCache),
+    getTokenMeta(ctx.activeProvider || ctx.provider, token0Address, tokenCache),
+    getTokenMeta(ctx.activeProvider || ctx.provider, token1Address, tokenCache),
   ]);
 
   return {

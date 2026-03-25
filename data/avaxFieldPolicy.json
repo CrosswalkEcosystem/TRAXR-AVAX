@@ -1,8 +1,8 @@
 {
   "defaults": {
-    "contractAdmin": "unknown",
-    "contractOwner": "unknown",
-    "contractHasTimelock": false,
+    "contractAdmin": null,
+    "contractOwner": null,
+    "contractHasTimelock": null,
     "feePct": 0,
     "feeStabilityPct": 35,
     "tx7d": 0,

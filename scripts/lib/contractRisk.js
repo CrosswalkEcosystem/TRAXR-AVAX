@@ -17,6 +17,13 @@ function parseStorageAddress(slotValue) {
 function createContractRiskEnricher({ provider, Contract, withRetry, abi, policy, log }) {
   const cache = new Map();
 
+  function normalizeOptionalAddress(value) {
+    if (typeof value !== "string") return null;
+    const trimmed = value.trim();
+    if (!trimmed || trimmed.toLowerCase() === "unknown") return null;
+    return /^0x[a-fA-F0-9]{40}$/.test(trimmed) ? trimmed.toLowerCase() : null;
+  }
+
   async function getStorage(address, slot, label) {
     try {
       return await withRetry(
@@ -49,9 +56,12 @@ function createContractRiskEnricher({ provider, Contract, withRetry, abi, policy
     const result = {
       contractIsProxy: false,
       contractIsUpgradeable: false,
-      contractAdmin: policy.defaults.contractAdmin || "unknown",
-      contractOwner: policy.defaults.contractOwner || "unknown",
-      contractHasTimelock: Boolean(policy.defaults.contractHasTimelock),
+      contractAdmin: normalizeOptionalAddress(policy.defaults.contractAdmin),
+      contractOwner: normalizeOptionalAddress(policy.defaults.contractOwner),
+      contractHasTimelock:
+        typeof policy.defaults.contractHasTimelock === "boolean"
+          ? policy.defaults.contractHasTimelock
+          : null,
     };
 
     try {
@@ -85,8 +95,8 @@ function createContractRiskEnricher({ provider, Contract, withRetry, abi, policy
       const admin = adminFromSlot || admin1 || null;
       const owner = owner1 || owner2 || null;
 
-      result.contractAdmin = admin || result.contractAdmin;
-      result.contractOwner = owner || result.contractOwner;
+      result.contractAdmin = normalizeOptionalAddress(admin) || result.contractAdmin;
+      result.contractOwner = normalizeOptionalAddress(owner) || result.contractOwner;
 
       const adminLower = String(result.contractAdmin || "").toLowerCase();
       const ownerLower = String(result.contractOwner || "").toLowerCase();

@@ -62,6 +62,7 @@ const config = {
   enableOraclePriceSeed: process.env.TRAXR_ENABLE_ORACLE_PRICE_SEED !== "false",
   wavaxUsdOracle: process.env.TRAXR_WAVAX_USD_ORACLE
     || "0x0A77230d17318075983913bC2145DB16C7366156",
+  targetTimestamp: process.env.TRAXR_TARGET_TIMESTAMP || "",
 };
 
 const CHAIN = "Avalanche";
@@ -160,6 +161,28 @@ function normalizeAddressMaybe(value) {
   } catch {
     return /^0x[a-fA-F0-9]{40}$/.test(value) ? value.toLowerCase() : null;
   }
+}
+
+function createHistoricalProvider(baseProvider, targetBlock) {
+  return new Proxy(baseProvider, {
+    get(target, prop, receiver) {
+      if (prop === "call") {
+        return (tx, blockTag) => target.call(tx, blockTag ?? targetBlock);
+      }
+      if (prop === "getStorage") {
+        return (address, slot, blockTag) => target.getStorage(address, slot, blockTag ?? targetBlock);
+      }
+      if (prop === "getCode") {
+        return (address, blockTag) => target.getCode(address, blockTag ?? targetBlock);
+      }
+      if (prop === "getBlockNumber") {
+        return async () => targetBlock;
+      }
+
+      const value = Reflect.get(target, prop, receiver);
+      return typeof value === "function" ? value.bind(target) : value;
+    },
+  });
 }
 
 async function tryLoadOracleUsdPrice(provider, address, withRetry) {
@@ -342,8 +365,49 @@ async function enrichPools(adapterCtx, discovered) {
     };
 
     const fieldPolicy = loadFieldPolicy(FIELD_POLICY_PATH);
+
+    const {
+      registry,
+      runtime: dexConfigs,
+      missing: missingDexConfigs,
+    } = loadDexRuntimeConfigs(REGISTRY_PATH, FACTORIES_PATH, normalizeAddressMaybe);
+    const dexById = new Map(dexConfigs.map((d) => [d.dexId, d]));
+
+    const chainHeadBlock = await withRetry(() => provider.getBlockNumber(), "eth_blockNumber");
+    const chainHeadBlockData = await withRetry(
+      () => provider.getBlock(chainHeadBlock),
+      `eth_getBlockByNumber ${chainHeadBlock}`,
+    );
+    let latestBlock = chainHeadBlock;
+    let latestTs = chainHeadBlockData && typeof chainHeadBlockData.timestamp === "number"
+      ? chainHeadBlockData.timestamp
+      : Math.floor(Date.now() / 1000);
+    if (config.targetTimestamp) {
+      const targetMs = Date.parse(config.targetTimestamp);
+      if (Number.isNaN(targetMs)) {
+        throw new Error(`Invalid TRAXR_TARGET_TIMESTAMP: ${config.targetTimestamp}`);
+      }
+      latestBlock = await findBlockAtOrBeforeTimestamp(
+        provider,
+        chainHeadBlock,
+        Math.floor(targetMs / 1000),
+        withRetry,
+      );
+      const targetBlockData = await withRetry(
+        () => provider.getBlock(latestBlock),
+        `eth_getBlockByNumber ${latestBlock}`,
+      );
+      latestTs = targetBlockData && typeof targetBlockData.timestamp === "number"
+        ? targetBlockData.timestamp
+        : Math.floor(targetMs / 1000);
+      adapterCtx.activeProvider = createHistoricalProvider(provider, latestBlock);
+      log("CONFIG", "Historical target timestamp", config.targetTimestamp);
+      log("CONFIG", "Historical target block", latestBlock);
+    } else {
+      adapterCtx.activeProvider = provider;
+    }
     const enrichContractRisk = createContractRiskEnricher({
-      provider,
+      provider: adapterCtx.activeProvider,
       Contract,
       withRetry,
       policy: fieldPolicy,
@@ -354,22 +418,6 @@ async function enrichPools(adapterCtx, discovered) {
         "function admin() view returns (address)",
       ],
     });
-
-    const {
-      registry,
-      runtime: dexConfigs,
-      missing: missingDexConfigs,
-    } = loadDexRuntimeConfigs(REGISTRY_PATH, FACTORIES_PATH, normalizeAddressMaybe);
-    const dexById = new Map(dexConfigs.map((d) => [d.dexId, d]));
-
-    const latestBlock = await withRetry(() => provider.getBlockNumber(), "eth_blockNumber");
-    const latestBlockData = await withRetry(
-      () => provider.getBlock(latestBlock),
-      `eth_getBlockByNumber ${latestBlock}`,
-    );
-    const latestTs = latestBlockData && typeof latestBlockData.timestamp === "number"
-      ? latestBlockData.timestamp
-      : Math.floor(Date.now() / 1000);
     const from24 = await findBlockAtOrBeforeTimestamp(provider, latestBlock, latestTs - 24 * 60 * 60, withRetry);
     const from7d = config.enable7dVolume
       ? await findBlockAtOrBeforeTimestamp(provider, latestBlock, latestTs - 7 * 24 * 60 * 60, withRetry)
@@ -391,7 +439,7 @@ async function enrichPools(adapterCtx, discovered) {
     log("ENRICH", "Pools enriched", enriched.length);
 
     const priceMap = pricing.seedPrices(STABLE_PRICE_USD);
-    if (config.enableOraclePriceSeed) {
+    if (config.enableOraclePriceSeed && !config.targetTimestamp) {
       const wavaxAddress = constants.SEED_TOKENS[0].toLowerCase();
       if (!priceMap.has(wavaxAddress)) {
         const oraclePrice = await tryLoadOracleUsdPrice(
@@ -407,6 +455,8 @@ async function enrichPools(adapterCtx, discovered) {
         }
       }
     }
+    const anchored = pricing.deriveStableAnchoredPrices(enriched, priceMap);
+    log("PRICING", "Seeded direct stable-pair prices", anchored);
     pricing.derivePrices(enriched, priceMap);
 
     const byDex = new Map();
@@ -426,7 +476,9 @@ async function enrichPools(adapterCtx, discovered) {
       selectedPools.push(...top);
     }
 
-    const nowIso = new Date().toISOString();
+    const nowIso = config.targetTimestamp
+      ? new Date(config.targetTimestamp).toISOString()
+      : new Date().toISOString();
     const rows = [];
     const skipped = {
       lowLiquidity: 0,

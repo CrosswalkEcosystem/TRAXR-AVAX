@@ -2,6 +2,13 @@ const fs = require("fs");
 const path = require("path");
 
 function createOutputHelpers({ chain, round, safeDiv, confidenceFromPrices, outputDir, log }) {
+  function normalizeOptionalString(value) {
+    if (typeof value !== "string") return null;
+    const trimmed = value.trim();
+    if (!trimmed || trimmed.toLowerCase() === "unknown") return null;
+    return trimmed;
+  }
+
   function normalizeRow(pool, activity, priceMap, liquidityUsd, nowIso) {
     const token0Price = priceMap.get(pool.token0.address.toLowerCase()) || null;
     const token1Price = priceMap.get(pool.token1.address.toLowerCase()) || null;
@@ -34,13 +41,16 @@ function createOutputHelpers({ chain, round, safeDiv, confidenceFromPrices, outp
       feePct: typeof pool.feePct === "number" ? round(pool.feePct, 6) : 0,
       liquidityDepthUsd: liquidityUsd,
       volatilityImpactPct: round(volatilityImpactPct, 6),
-      liquidityConcentrationPct: 0,
+      liquidityConcentrationPct: null,
       feeStabilityPct: typeof pool.feeStabilityPct === "number" ? round(pool.feeStabilityPct, 6) : 0,
       contractIsProxy: Boolean(pool.contractIsProxy),
       contractIsUpgradeable: Boolean(pool.contractIsUpgradeable),
-      contractAdmin: pool.contractAdmin || "unknown",
-      contractOwner: pool.contractOwner || "unknown",
-      contractHasTimelock: Boolean(pool.contractHasTimelock),
+      contractAdmin: normalizeOptionalString(pool.contractAdmin),
+      contractOwner: normalizeOptionalString(pool.contractOwner),
+      contractHasTimelock:
+        typeof pool.contractHasTimelock === "boolean"
+          ? pool.contractHasTimelock
+          : null,
       protocolDependencies: Array.isArray(pool.protocolDependencies) ? pool.protocolDependencies : [],
       poolUpdatedAt: nowIso,
       dataSource: "avalanche-rpc",
@@ -48,11 +58,10 @@ function createOutputHelpers({ chain, round, safeDiv, confidenceFromPrices, outp
   }
 
   function applyLiquidityConcentration(rows) {
-    const total = rows.reduce((acc, r) => acc + (r.liquidityUsd || 0), 0);
     for (const row of rows) {
-      row.liquidityConcentrationPct = total > 0
-        ? round((row.liquidityUsd / total) * 100, 6)
-        : 0;
+      // Native RPC snapshots do not currently have a real per-pool concentration metric.
+      // Do not reuse pool share of total snapshot TVL as "concentration".
+      row.liquidityConcentrationPct = null;
     }
   }
 

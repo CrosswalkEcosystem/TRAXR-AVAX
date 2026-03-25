@@ -21,6 +21,13 @@ let schedulerStarted = false;
 const poolKey = (mintA: string, mintB: string) =>
   [mintA.toUpperCase(), mintB.toUpperCase()].sort().join("_");
 
+function normalizeOptionalString(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  if (!trimmed || trimmed.toLowerCase() === "unknown") return null;
+  return trimmed;
+}
+
 /* ---------------------------------- */
 /* Pool matching (search)              */
 /* ---------------------------------- */
@@ -262,6 +269,10 @@ export function normalizePool(p: any): AvaxPoolMetrics {
         ? p.liquidityUsd
         : 0;
 
+  const isNativeRpcSnapshot =
+    p?.dataSource === "avalanche-rpc" ||
+    (typeof p?.addressSource === "string" && p.addressSource.startsWith("avalanche-rpc:"));
+
   return {
     poolId,
     poolRef: p.poolRef ?? undefined,
@@ -306,7 +317,7 @@ export function normalizePool(p: any): AvaxPoolMetrics {
 
     liquidityDepthUsd,
     liquidityConcentrationPct:
-      typeof p.liquidityConcentrationPct === "number"
+      !isNativeRpcSnapshot && typeof p.liquidityConcentrationPct === "number"
         ? p.liquidityConcentrationPct
         : null,
     feeStabilityPct:
@@ -324,8 +335,8 @@ export function normalizePool(p: any): AvaxPoolMetrics {
       typeof p.contractIsUpgradeable === "boolean"
         ? p.contractIsUpgradeable
         : null,
-    contractAdmin: p.contractAdmin ?? null,
-    contractOwner: p.contractOwner ?? null,
+    contractAdmin: normalizeOptionalString(p.contractAdmin),
+    contractOwner: normalizeOptionalString(p.contractOwner),
     contractHasTimelock:
       typeof p.contractHasTimelock === "boolean"
         ? p.contractHasTimelock

@@ -57,6 +57,57 @@ function createPricingHelpers({ round, toNumber, formatUnits, v2VolumeMode = "au
     return weighted / totalWeight;
   }
 
+  function deriveStableAnchoredPrices(pools, priceMap, options = {}) {
+    const {
+      minStableUsdWeight = 1000,
+    } = options;
+
+    const candidatesByToken = new Map();
+
+    for (const pool of pools) {
+      if (!pool.amount0 || !pool.amount1) continue;
+
+      const t0 = pool.token0.address.toLowerCase();
+      const t1 = pool.token1.address.toLowerCase();
+      const p0 = priceMap.get(t0);
+      const p1 = priceMap.get(t1);
+
+      const stable0 = p0 != null && Math.abs(p0 - 1) <= 0.02;
+      const stable1 = p1 != null && Math.abs(p1 - 1) <= 0.02;
+
+      if (stable0 && pool.amount1 > 0) {
+        const stableUsd = pool.amount0 * p0;
+        const candidate = stableUsd / pool.amount1;
+        if (Number.isFinite(candidate) && candidate > 0 && Number.isFinite(stableUsd) && stableUsd >= minStableUsdWeight) {
+          const list = candidatesByToken.get(t1) || [];
+          list.push({ price: candidate, weight: stableUsd });
+          candidatesByToken.set(t1, list);
+        }
+      }
+
+      if (stable1 && pool.amount0 > 0) {
+        const stableUsd = pool.amount1 * p1;
+        const candidate = stableUsd / pool.amount0;
+        if (Number.isFinite(candidate) && candidate > 0 && Number.isFinite(stableUsd) && stableUsd >= minStableUsdWeight) {
+          const list = candidatesByToken.get(t0) || [];
+          list.push({ price: candidate, weight: stableUsd });
+          candidatesByToken.set(t0, list);
+        }
+      }
+    }
+
+    let updated = 0;
+    for (const [token, candidates] of candidatesByToken.entries()) {
+      const price = aggregateCandidates(candidates);
+      if (price && Number.isFinite(price) && price > 0) {
+        priceMap.set(token, price);
+        updated += 1;
+      }
+    }
+
+    return updated;
+  }
+
   function derivePrices(pools, priceMap) {
     for (let pass = 0; pass < 10; pass += 1) {
       const candidatesByToken = new Map();
@@ -227,6 +278,7 @@ function createPricingHelpers({ round, toNumber, formatUnits, v2VolumeMode = "au
 
   return {
     seedPrices,
+    deriveStableAnchoredPrices,
     derivePrices,
     computeLiquidityUsd,
     v2SwapUsd,

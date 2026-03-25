@@ -94,13 +94,14 @@ async function discoverPools(ctx, dex, latestBlock) {
     config.topPoolsPerDex * config.candidateMultiplier,
   );
   return [...poolMap.values()]
+    .filter((item) => Number(item.eventBlock || 0) <= latestBlock)
     .sort((a, b) => Number(b.eventBlock || 0) - Number(a.eventBlock || 0))
     .slice(0, candidateTarget);
 }
 
 async function enrichPool(ctx, pool, tokenCache) {
   const { Contract, v3PoolAbi, erc20Abi, withRetry, getTokenMeta, toNumber } = ctx;
-  const v3 = new Contract(pool.poolAddress, v3PoolAbi, ctx.provider);
+  const v3 = new Contract(pool.poolAddress, v3PoolAbi, ctx.activeProvider || ctx.provider);
 
   const [token0Address, token1Address, feeRaw] = await Promise.all([
     withRetry(() => v3.token0(), `${pool.dexId}.token0 ${pool.poolAddress}`),
@@ -109,12 +110,12 @@ async function enrichPool(ctx, pool, tokenCache) {
   ]);
 
   const [token0, token1] = await Promise.all([
-    getTokenMeta(ctx.provider, token0Address, tokenCache),
-    getTokenMeta(ctx.provider, token1Address, tokenCache),
+    getTokenMeta(ctx.activeProvider || ctx.provider, token0Address, tokenCache),
+    getTokenMeta(ctx.activeProvider || ctx.provider, token1Address, tokenCache),
   ]);
 
-  const token0Contract = new Contract(token0Address, erc20Abi, ctx.provider);
-  const token1Contract = new Contract(token1Address, erc20Abi, ctx.provider);
+  const token0Contract = new Contract(token0Address, erc20Abi, ctx.activeProvider || ctx.provider);
+  const token1Contract = new Contract(token1Address, erc20Abi, ctx.activeProvider || ctx.provider);
 
   const [balance0, balance1] = await Promise.all([
     withRetry(() => token0Contract.balanceOf(pool.poolAddress), `${pool.dexId}.balance0 ${pool.poolAddress}`),
