@@ -154,6 +154,11 @@ const PRICE_ANCHOR_TOKENS = [
   "0xd586E7F844cEa2F87f50152665BCbc2C279D8d70", // DAI.e
 ];
 
+const PRIORITY_WAVAX_TARGET_TOKENS = [
+  "0x49D5c2BdFfac6CE2BFdB6640F4F80f226bc10bAB", // WETH.e
+  "0x50b7545627a5162F82A992c33b87aDc75187B218", // WBTC.e
+];
+
 const constants = {
   ZERO_ADDRESS: "0x0000000000000000000000000000000000000000",
   SEED_TOKENS: [
@@ -512,6 +517,16 @@ async function hydrateSelectedPools(adapterCtx, pools, tokenCache) {
           log("WARN", "WAVAX oracle seed unavailable", config.wavaxUsdOracle);
         }
       }
+    }
+    const priorityTargets = new Set(PRIORITY_WAVAX_TARGET_TOKENS.map((token) => String(token).toLowerCase()));
+    const wavaxOnlyAnchorTokens = new Set([constants.SEED_TOKENS[0].toLowerCase()]);
+    const priorityAnchored = pricing.deriveSpecificAnchoredPrices(enriched, priceMap, {
+      quoteTokens: wavaxOnlyAnchorTokens,
+      targetTokens: priorityTargets,
+      minKnownSideUsdWeight: 10000,
+    });
+    if (priorityAnchored > 0) {
+      log("PRICING", "Seeded priority WAVAX-pair prices", priorityAnchored);
     }
     const anchored = pricing.deriveStableAnchoredPrices(enriched, priceMap);
     log("PRICING", "Seeded direct stable-pair prices", anchored);

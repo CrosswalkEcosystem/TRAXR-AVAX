@@ -109,6 +109,71 @@ function createPricingHelpers({ round, toNumber, formatUnits, v2VolumeMode = "au
     return updated;
   }
 
+  function deriveSpecificAnchoredPrices(pools, priceMap, options = {}) {
+    const {
+      quoteTokens = null,
+      targetTokens = null,
+      minKnownSideUsdWeight = 10000,
+    } = options;
+
+    const candidatesByToken = new Map();
+
+    for (const pool of pools) {
+      if (!pool.amount0 || !pool.amount1) continue;
+
+      const t0 = pool.token0.address.toLowerCase();
+      const t1 = pool.token1.address.toLowerCase();
+      const p0 = priceMap.get(t0);
+      const p1 = priceMap.get(t1);
+      const quote0 = !quoteTokens || quoteTokens.has(t0);
+      const quote1 = !quoteTokens || quoteTokens.has(t1);
+      const target0 = !targetTokens || targetTokens.has(t0);
+      const target1 = !targetTokens || targetTokens.has(t1);
+
+      if (p0 && quote0 && !p1 && target1 && pool.amount1 > 0) {
+        const candidate = (pool.amount0 * p0) / pool.amount1;
+        const weight = pool.amount0 * p0;
+        if (
+          Number.isFinite(candidate)
+          && candidate > 0
+          && Number.isFinite(weight)
+          && weight >= minKnownSideUsdWeight
+        ) {
+          const list = candidatesByToken.get(t1) || [];
+          list.push({ price: candidate, weight });
+          candidatesByToken.set(t1, list);
+        }
+      }
+
+      if (!p0 && target0 && p1 && quote1 && pool.amount0 > 0) {
+        const candidate = (pool.amount1 * p1) / pool.amount0;
+        const weight = pool.amount1 * p1;
+        if (
+          Number.isFinite(candidate)
+          && candidate > 0
+          && Number.isFinite(weight)
+          && weight >= minKnownSideUsdWeight
+        ) {
+          const list = candidatesByToken.get(t0) || [];
+          list.push({ price: candidate, weight });
+          candidatesByToken.set(t0, list);
+        }
+      }
+    }
+
+    let updated = 0;
+    for (const [token, candidates] of candidatesByToken.entries()) {
+      if (priceMap.has(token)) continue;
+      const price = aggregateCandidates(candidates);
+      if (price && Number.isFinite(price) && price > 0) {
+        priceMap.set(token, price);
+        updated += 1;
+      }
+    }
+
+    return updated;
+  }
+
   function derivePrices(pools, priceMap, options = {}) {
     const {
       anchorTokens = null,
@@ -301,6 +366,7 @@ function createPricingHelpers({ round, toNumber, formatUnits, v2VolumeMode = "au
 
   return {
     seedPrices,
+    deriveSpecificAnchoredPrices,
     deriveStableAnchoredPrices,
     derivePrices,
     computeLiquidityUsd,
