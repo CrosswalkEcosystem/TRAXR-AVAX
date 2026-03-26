@@ -110,6 +110,8 @@ const LB_PAIR_ABI = [
   "function getTokenY() view returns (address)",
   "function getReserves() view returns (uint128 reserveX, uint128 reserveY)",
   "function getBinStep() view returns (uint16)",
+  "function getActiveId() view returns (uint24)",
+  "function getBin(uint24 id) view returns (uint128 binReserveX, uint128 binReserveY)",
 ];
 const BALANCER_VAULT_ABI = [
   "function getPoolTokens(bytes32 poolId) view returns (address[] tokens, uint256[] balances, uint256 lastChangeBlock)",
@@ -157,6 +159,27 @@ const PRICE_ANCHOR_TOKENS = [
 const PRIORITY_WAVAX_TARGET_TOKENS = [
   "0x49D5c2BdFfac6CE2BFdB6640F4F80f226bc10bAB", // WETH.e
   "0x50b7545627a5162F82A992c33b87aDc75187B218", // WBTC.e
+];
+
+const ORACLE_PRICE_SEEDS = [
+  {
+    token: "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7", // WAVAX
+    oracleEnv: "TRAXR_WAVAX_USD_ORACLE",
+    oracle: "0x0A77230d17318075983913bC2145DB16C7366156",
+    label: "WAVAX",
+  },
+  {
+    token: "0x49D5c2BdFfac6CE2BFdB6640F4F80f226bc10bAB", // WETH.e
+    oracleEnv: "TRAXR_WETH_USD_ORACLE",
+    oracle: "0x976B3D034E162d8bD72D6b9C989d545b839003b0",
+    label: "WETH.e",
+  },
+  {
+    token: "0x50b7545627a5162F82A992c33b87aDc75187B218", // WBTC.e
+    oracleEnv: "TRAXR_WBTC_USD_ORACLE",
+    oracle: "0x2779D32d5166BAaa2B2b658333bA7e6Ec0C65743",
+    label: "WBTC.e",
+  },
 ];
 
 const constants = {
@@ -502,25 +525,26 @@ async function hydrateSelectedPools(adapterCtx, pools, tokenCache) {
     const priceMap = pricing.seedPrices(STABLE_PRICE_USD);
     const anchorPriceTokens = new Set(PRICE_ANCHOR_TOKENS.map((token) => String(token).toLowerCase()));
     if (config.enableOraclePriceSeed && !config.targetTimestamp) {
-      const wavaxAddress = constants.SEED_TOKENS[0].toLowerCase();
-      if (!priceMap.has(wavaxAddress)) {
-        const oraclePrice = await tryLoadOracleUsdPrice(
-          provider,
-          config.wavaxUsdOracle,
-          withRetry,
-        );
+      for (const seed of ORACLE_PRICE_SEEDS) {
+        const tokenAddress = seed.token.toLowerCase();
+        if (priceMap.has(tokenAddress)) continue;
+        const oracleAddress = process.env[seed.oracleEnv] || seed.oracle;
+        const oraclePrice = await tryLoadOracleUsdPrice(provider, oracleAddress, withRetry);
         if (oraclePrice != null) {
-          priceMap.set(wavaxAddress, oraclePrice);
-          anchorPriceTokens.add(wavaxAddress);
-          log("PRICING", "Seeded WAVAX price from oracle", `${oraclePrice}`);
+          priceMap.set(tokenAddress, oraclePrice);
+          if (tokenAddress === constants.SEED_TOKENS[0].toLowerCase()) {
+            anchorPriceTokens.add(tokenAddress);
+          }
+          log("PRICING", `Seeded ${seed.label} price from oracle`, `${oraclePrice}`);
         } else {
-          log("WARN", "WAVAX oracle seed unavailable", config.wavaxUsdOracle);
+          log("WARN", `${seed.label} oracle seed unavailable`, oracleAddress);
         }
       }
     }
     const priorityTargets = new Set(PRIORITY_WAVAX_TARGET_TOKENS.map((token) => String(token).toLowerCase()));
     const wavaxOnlyAnchorTokens = new Set([constants.SEED_TOKENS[0].toLowerCase()]);
-    const priorityAnchored = pricing.deriveSpecificAnchoredPrices(enriched, priceMap, {
+    const priorityPools = enriched.filter((pool) => pool.protocolType === "uniswap_v2");
+    const priorityAnchored = pricing.deriveSpecificAnchoredPrices(priorityPools, priceMap, {
       quoteTokens: wavaxOnlyAnchorTokens,
       targetTokens: priorityTargets,
       minKnownSideUsdWeight: 10000,

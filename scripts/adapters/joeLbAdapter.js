@@ -39,12 +39,17 @@ async function enrichPool(ctx, pool, tokenCache) {
   const includeMetadata = arguments[3]?.includeMetadata !== false;
   const lb = new Contract(pool.poolAddress, lbPairAbi, ctx.activeProvider || ctx.provider);
 
-  const [tokenXAddress, tokenYAddress, reserves, binStep] = await Promise.all([
+  const [tokenXAddress, tokenYAddress, reserves, binStep, activeId] = await Promise.all([
     withRetry(() => lb.getTokenX(), `${pool.dexId}.getTokenX ${pool.poolAddress}`),
     withRetry(() => lb.getTokenY(), `${pool.dexId}.getTokenY ${pool.poolAddress}`),
     withRetry(() => lb.getReserves(), `${pool.dexId}.getReserves ${pool.poolAddress}`),
     withRetry(() => lb.getBinStep(), `${pool.dexId}.getBinStep ${pool.poolAddress}`).catch(() => null),
+    withRetry(() => lb.getActiveId(), `${pool.dexId}.getActiveId ${pool.poolAddress}`).catch(() => null),
   ]);
+
+  const activeBin = activeId == null
+    ? null
+    : await withRetry(() => lb.getBin(activeId), `${pool.dexId}.getBin(${activeId}) ${pool.poolAddress}`).catch(() => null);
 
   const [token0, token1] = await Promise.all([
     getTokenMeta(ctx.activeProvider || ctx.provider, tokenXAddress, tokenCache, { includeMetadata }),
@@ -57,6 +62,11 @@ async function enrichPool(ctx, pool, tokenCache) {
     token1,
     amount0: toNumber(reserves.reserveX, token0.decimals, ctx.formatUnits),
     amount1: toNumber(reserves.reserveY, token1.decimals, ctx.formatUnits),
+    reserveBalanceAmount0:
+      activeBin == null ? null : toNumber(activeBin.binReserveX, token0.decimals, ctx.formatUnits),
+    reserveBalanceAmount1:
+      activeBin == null ? null : toNumber(activeBin.binReserveY, token1.decimals, ctx.formatUnits),
+    activeBinId: activeId == null ? null : Number(activeId),
     binStep: binStep == null ? null : Number(binStep),
     feePct: pool.feePct ?? null,
     swapType: "joe_lb",

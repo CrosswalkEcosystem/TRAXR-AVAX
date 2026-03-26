@@ -44,6 +44,8 @@ const LB_PAIR_ABI = [
   "function getTokenY() view returns (address)",
   "function getReserves() view returns (uint128 reserveX, uint128 reserveY)",
   "function getBinStep() view returns (uint16)",
+  "function getActiveId() view returns (uint24)",
+  "function getBin(uint24 id) view returns (uint128 binReserveX, uint128 binReserveY)",
 ];
 const BALANCER_VAULT_ABI = [
   "function getPoolTokens(bytes32 poolId) view returns (address[] tokens, uint256[] balances, uint256 lastChangeBlock)",
@@ -70,8 +72,26 @@ const PRICE_ANCHOR_TOKENS = [
   "0xd586E7F844cEa2F87f50152665BCbc2C279D8d70", // DAI.e
 ].map((value) => value.toLowerCase());
 
-const WAVAX_USD_ORACLE =
-  process.env.TRAXR_WAVAX_USD_ORACLE || "0x0A77230d17318075983913bC2145DB16C7366156";
+const ORACLE_PRICE_SEEDS = [
+  {
+    token: "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7", // WAVAX
+    oracleEnv: "TRAXR_WAVAX_USD_ORACLE",
+    oracle: "0x0A77230d17318075983913bC2145DB16C7366156",
+    label: "WAVAX",
+  },
+  {
+    token: "0x49D5c2BdFfac6CE2BFdB6640F4F80f226bc10bAB", // WETH.e
+    oracleEnv: "TRAXR_WETH_USD_ORACLE",
+    oracle: "0x976B3D034E162d8bD72D6b9C989d545b839003b0",
+    label: "WETH.e",
+  },
+  {
+    token: "0x50b7545627a5162F82A992c33b87aDc75187B218", // WBTC.e
+    oracleEnv: "TRAXR_WBTC_USD_ORACLE",
+    oracle: "0x2779D32d5166BAaa2B2b658333bA7e6Ec0C65743",
+    label: "WBTC.e",
+  },
+];
 
 function log(step, msg, extra = "") {
   const ts = new Date().toISOString();
@@ -168,8 +188,15 @@ function computeReserveBalancePct(pool, priceMap) {
   const p1 = priceMap.get(pool.token1.address.toLowerCase()) || null;
   if (p0 == null || p1 == null) return null;
 
-  const usd0 = (Number(pool.amount0) || 0) * p0;
-  const usd1 = (Number(pool.amount1) || 0) * p1;
+  const balanceAmount0 = Number(
+    typeof pool.reserveBalanceAmount0 === "number" ? pool.reserveBalanceAmount0 : pool.amount0,
+  ) || 0;
+  const balanceAmount1 = Number(
+    typeof pool.reserveBalanceAmount1 === "number" ? pool.reserveBalanceAmount1 : pool.amount1,
+  ) || 0;
+
+  const usd0 = balanceAmount0 * p0;
+  const usd1 = balanceAmount1 * p1;
   if (!(usd0 > 0) || !(usd1 > 0)) return 0;
   return round(100 * Math.min(usd0, usd1) / Math.max(usd0, usd1), 6);
 }
@@ -269,14 +296,16 @@ async function backfillFile(filePath, shared) {
 
   const priceMap = shared.pricing.seedPrices(STABLE_PRICE_USD);
   const anchorTokens = new Set(PRICE_ANCHOR_TOKENS);
-  const wavaxAddress = PRICE_ANCHOR_TOKENS[0];
-  if (!priceMap.has(wavaxAddress)) {
-    const oraclePrice = await tryLoadOracleUsdPrice(historicalProvider, WAVAX_USD_ORACLE, shared.withRetry);
+  for (const seed of ORACLE_PRICE_SEEDS) {
+    const tokenAddress = seed.token.toLowerCase();
+    if (priceMap.has(tokenAddress)) continue;
+    const oracleAddress = process.env[seed.oracleEnv] || seed.oracle;
+    const oraclePrice = await tryLoadOracleUsdPrice(historicalProvider, oracleAddress, shared.withRetry);
     if (oraclePrice != null) {
-      priceMap.set(wavaxAddress, oraclePrice);
-      log("PRICING", "Seeded historical WAVAX price from oracle", `${oraclePrice}`);
+      priceMap.set(tokenAddress, oraclePrice);
+      log("PRICING", `Seeded historical ${seed.label} price from oracle`, `${oraclePrice}`);
     } else {
-      log("WARN", "Historical WAVAX oracle seed unavailable", WAVAX_USD_ORACLE);
+      log("WARN", `Historical ${seed.label} oracle seed unavailable`, oracleAddress);
     }
   }
   shared.pricing.deriveStableAnchoredPrices(pricedPools, priceMap);
