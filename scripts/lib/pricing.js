@@ -98,6 +98,7 @@ function createPricingHelpers({ round, toNumber, formatUnits, v2VolumeMode = "au
 
     let updated = 0;
     for (const [token, candidates] of candidatesByToken.entries()) {
+      if (priceMap.has(token)) continue;
       const price = aggregateCandidates(candidates);
       if (price && Number.isFinite(price) && price > 0) {
         priceMap.set(token, price);
@@ -108,8 +109,14 @@ function createPricingHelpers({ round, toNumber, formatUnits, v2VolumeMode = "au
     return updated;
   }
 
-  function derivePrices(pools, priceMap) {
-    for (let pass = 0; pass < 10; pass += 1) {
+  function derivePrices(pools, priceMap, options = {}) {
+    const {
+      anchorTokens = null,
+      minKnownSideUsdWeight = 10000,
+      maxPasses = 1,
+    } = options;
+
+    for (let pass = 0; pass < maxPasses; pass += 1) {
       const candidatesByToken = new Map();
 
       for (const pool of pools) {
@@ -119,21 +126,33 @@ function createPricingHelpers({ round, toNumber, formatUnits, v2VolumeMode = "au
         const t1 = pool.token1.address.toLowerCase();
         const p0 = priceMap.get(t0);
         const p1 = priceMap.get(t1);
+        const anchored0 = !anchorTokens || anchorTokens.has(t0);
+        const anchored1 = !anchorTokens || anchorTokens.has(t1);
 
-        if (p0 && !p1 && pool.amount1 > 0) {
+        if (p0 && anchored0 && !p1 && pool.amount1 > 0) {
           const candidate = (pool.amount0 * p0) / pool.amount1;
           const weight = pool.amount0 * p0; // known-side USD depth
-          if (Number.isFinite(candidate) && candidate > 0 && Number.isFinite(weight) && weight > 50) {
+          if (
+            Number.isFinite(candidate)
+            && candidate > 0
+            && Number.isFinite(weight)
+            && weight >= minKnownSideUsdWeight
+          ) {
             const list = candidatesByToken.get(t1) || [];
             list.push({ price: candidate, weight });
             candidatesByToken.set(t1, list);
           }
         }
 
-        if (!p0 && p1 && pool.amount0 > 0) {
+        if (!p0 && p1 && anchored1 && pool.amount0 > 0) {
           const candidate = (pool.amount1 * p1) / pool.amount0;
           const weight = pool.amount1 * p1; // known-side USD depth
-          if (Number.isFinite(candidate) && candidate > 0 && Number.isFinite(weight) && weight > 50) {
+          if (
+            Number.isFinite(candidate)
+            && candidate > 0
+            && Number.isFinite(weight)
+            && weight >= minKnownSideUsdWeight
+          ) {
             const list = candidatesByToken.get(t0) || [];
             list.push({ price: candidate, weight });
             candidatesByToken.set(t0, list);
@@ -175,7 +194,11 @@ function createPricingHelpers({ round, toNumber, formatUnits, v2VolumeMode = "au
     const usd0 = p0 != null ? pool.amount0 * p0 : null;
     const usd1 = p1 != null ? pool.amount1 * p1 : null;
 
-    if (usd0 != null && usd1 != null) return round(usd0 + usd1);
+    if (usd0 != null && usd1 != null) {
+      // Use the weaker side as the pool value anchor to avoid inflated TVL
+      // on skewed, rebasing, or stale-reserve pairs.
+      return round(2 * Math.min(usd0, usd1));
+    }
     if (usd0 != null) return round(usd0 * 2);
     if (usd1 != null) return round(usd1 * 2);
     return 0;

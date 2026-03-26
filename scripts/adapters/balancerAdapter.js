@@ -92,6 +92,7 @@ async function discoverPools(ctx, dex, latestBlock) {
 
 async function enrichPool(ctx, pool, tokenCache) {
   const { Contract, balancerVaultAbi, withRetry, getTokenMeta, toNumber } = ctx;
+  const includeMetadata = arguments[3]?.includeMetadata !== false;
   const vault = new Contract(pool.vaultAddress, balancerVaultAbi, ctx.activeProvider || ctx.provider);
 
   const poolTokens = await withRetry(
@@ -105,7 +106,10 @@ async function enrichPool(ctx, pool, tokenCache) {
     throw new Error("balancer pool has fewer than 2 tokens");
   }
 
-  const metas = await Promise.all(tokens.map((addr) => getTokenMeta(ctx.activeProvider || ctx.provider, addr, tokenCache)));
+  const metas = await Promise.all(
+    tokens.map((addr) =>
+      getTokenMeta(ctx.activeProvider || ctx.provider, addr, tokenCache, { includeMetadata })),
+  );
   const rows = metas.map((meta, i) => ({
     address: meta.address,
     name: meta.name,

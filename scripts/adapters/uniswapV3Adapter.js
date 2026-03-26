@@ -101,6 +101,7 @@ async function discoverPools(ctx, dex, latestBlock) {
 
 async function enrichPool(ctx, pool, tokenCache) {
   const { Contract, v3PoolAbi, erc20Abi, withRetry, getTokenMeta, toNumber } = ctx;
+  const includeMetadata = arguments[3]?.includeMetadata !== false;
   const v3 = new Contract(pool.poolAddress, v3PoolAbi, ctx.activeProvider || ctx.provider);
 
   const [token0Address, token1Address, feeRaw] = await Promise.all([
@@ -110,8 +111,8 @@ async function enrichPool(ctx, pool, tokenCache) {
   ]);
 
   const [token0, token1] = await Promise.all([
-    getTokenMeta(ctx.activeProvider || ctx.provider, token0Address, tokenCache),
-    getTokenMeta(ctx.activeProvider || ctx.provider, token1Address, tokenCache),
+    getTokenMeta(ctx.activeProvider || ctx.provider, token0Address, tokenCache, { includeMetadata }),
+    getTokenMeta(ctx.activeProvider || ctx.provider, token1Address, tokenCache, { includeMetadata }),
   ]);
 
   const token0Contract = new Contract(token0Address, erc20Abi, ctx.activeProvider || ctx.provider);

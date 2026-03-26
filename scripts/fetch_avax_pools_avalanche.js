@@ -18,6 +18,7 @@ const {
   timestampSlug,
 } = require("./lib/math");
 const { createRpcHelpers } = require("./lib/rpc");
+const { createAsyncHelpers } = require("./lib/async");
 const { createTokenMetaLoader } = require("./lib/token");
 const { createPricingHelpers } = require("./lib/pricing");
 const { createOutputHelpers } = require("./lib/output");
@@ -37,8 +38,8 @@ const FACTORIES_PATH = path.join(__dirname, "..", "data", "avaxDexFactories.json
 const FIELD_POLICY_PATH = path.join(__dirname, "..", "data", "avaxFieldPolicy.json");
 
 const config = {
-  topPoolsPerDex: Number(process.env.TRAXR_MAX_POOLS_PER_DEX || 20),
-  candidateMultiplier: Number(process.env.TRAXR_CANDIDATE_MULTIPLIER || 8),
+  topPoolsPerDex: Number(process.env.TRAXR_MAX_POOLS_PER_DEX || 50),
+  candidateMultiplier: Number(process.env.TRAXR_CANDIDATE_MULTIPLIER || 50),
   pairScanMode: (process.env.TRAXR_PAIR_SCAN_MODE || "spread").toLowerCase(),
   enable7dVolume: process.env.TRAXR_ENABLE_7D_VOLUME === "true",
   logMaxRange: Number(process.env.TRAXR_LOG_MAX_RANGE || 2000),
@@ -57,12 +58,21 @@ const config = {
   retryCount: Number(process.env.TRAXR_RPC_RETRY_COUNT || 3),
   retryDelayMs: Number(process.env.TRAXR_RPC_RETRY_DELAY_MS || 500),
   v2VolumeMode: (process.env.TRAXR_V2_VOLUME_MODE || "auto").toLowerCase(),
-  minLiquidityUsd: Number(process.env.TRAXR_FILTER_MIN_LIQUIDITY_USD || 10000),
+  minLiquidityUsd: Number(process.env.TRAXR_FILTER_MIN_LIQUIDITY_USD || 1000),
   require24hActivity: process.env.TRAXR_FILTER_REQUIRE_24H_ACTIVITY !== "false",
   enableOraclePriceSeed: process.env.TRAXR_ENABLE_ORACLE_PRICE_SEED !== "false",
   wavaxUsdOracle: process.env.TRAXR_WAVAX_USD_ORACLE
     || "0x0A77230d17318075983913bC2145DB16C7366156",
   targetTimestamp: process.env.TRAXR_TARGET_TIMESTAMP || "",
+  dexDiscoverConcurrency: Number(process.env.TRAXR_DEX_DISCOVER_CONCURRENCY || 2),
+  discoverRpcConcurrency: Number(process.env.TRAXR_DISCOVER_RPC_CONCURRENCY || 3),
+  enrichConcurrency: Number(process.env.TRAXR_ENRICH_CONCURRENCY || 4),
+  metadataConcurrency: Number(process.env.TRAXR_METADATA_CONCURRENCY || 4),
+  activityConcurrency: Number(process.env.TRAXR_ACTIVITY_CONCURRENCY || 2),
+  logChunkConcurrency: Number(process.env.TRAXR_LOG_CHUNK_CONCURRENCY || 2),
+  selectionMultiplier: Number(process.env.TRAXR_SELECTION_MULTIPLIER || 4),
+  activityBatchSize: Number(process.env.TRAXR_ACTIVITY_BATCH_SIZE || 8),
+  activityBatchConcurrency: Number(process.env.TRAXR_ACTIVITY_BATCH_CONCURRENCY || 2),
 };
 
 const CHAIN = "Avalanche";
@@ -134,6 +144,15 @@ const STABLE_PRICE_USD = {
   "0xc7198437980c041c805a1edcba50c1ce5db95118": 1,
   "0xd586e7f844cea2f87f50152665bcbc2c279d8d70": 1,
 };
+
+const PRICE_ANCHOR_TOKENS = [
+  "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7", // WAVAX
+  "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E", // USDC
+  "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664", // USDC.e
+  "0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7", // USDt
+  "0xc7198437980c041c805A1EDcbA50c1Ce5db95118", // USDT.e
+  "0xd586E7F844cEa2F87f50152665BCbc2C279D8d70", // DAI.e
+];
 
 const constants = {
   ZERO_ADDRESS: "0x0000000000000000000000000000000000000000",
@@ -238,26 +257,34 @@ async function findBlockAtOrBeforeTimestamp(provider, latestBlock, targetTimesta
 }
 
 async function discoverPoolsByDex(adapterCtx, dexConfigs, latestBlock) {
+  const discoveries = await adapterCtx.mapWithConcurrency(
+    dexConfigs,
+    adapterCtx.config.dexDiscoverConcurrency,
+    async (dex) => {
+      try {
+        if (!dex.factoryAddress || dex.factoryAddress === constants.ZERO_ADDRESS) {
+          log("WARN", `DEX ${dex.dexId} skipped`, "factoryAddress missing");
+          return [];
+        }
+
+        const handler = ADAPTERS[dex.protocolType];
+        if (!handler || typeof handler.discoverPools !== "function") {
+          log("WARN", `DEX ${dex.dexId} unsupported protocolType`, dex.protocolType);
+          return [];
+        }
+
+        return await handler.discoverPools(adapterCtx, dex, latestBlock);
+      } catch (err) {
+        log("WARN", `DEX ${dex.dexId} discovery failed`, err?.message || String(err));
+        return [];
+      }
+    },
+  );
   const out = [];
-
-  for (const dex of dexConfigs) {
+  for (const found of discoveries) {
     try {
-      if (!dex.factoryAddress || dex.factoryAddress === constants.ZERO_ADDRESS) {
-        log("WARN", `DEX ${dex.dexId} skipped`, "factoryAddress missing");
-        continue;
-      }
-
-      const handler = ADAPTERS[dex.protocolType];
-      if (!handler || typeof handler.discoverPools !== "function") {
-        log("WARN", `DEX ${dex.dexId} unsupported protocolType`, dex.protocolType);
-        continue;
-      }
-
-      const found = await handler.discoverPools(adapterCtx, dex, latestBlock);
       out.push(...found);
-    } catch (err) {
-      log("WARN", `DEX ${dex.dexId} discovery failed`, err?.message || String(err));
-    }
+    } catch {}
   }
 
   const unique = new Map();
@@ -269,24 +296,50 @@ async function discoverPoolsByDex(adapterCtx, dexConfigs, latestBlock) {
   return [...unique.values()];
 }
 
-async function enrichPools(adapterCtx, discovered) {
-  const tokenCache = new Map();
-  const enriched = [];
-
-  for (const pool of discovered) {
-    try {
-      const handler = ADAPTERS[pool.protocolType];
-      if (!handler || typeof handler.enrichPool !== "function") {
-        log("WARN", `Pool enrich unsupported protocol`, `${pool.dexId} ${pool.protocolType}`);
-        continue;
+async function enrichPools(adapterCtx, discovered, tokenCache, options = {}) {
+  const results = await adapterCtx.mapWithConcurrency(
+    discovered,
+    adapterCtx.config.enrichConcurrency,
+    async (pool) => {
+      try {
+        const handler = ADAPTERS[pool.protocolType];
+        if (!handler || typeof handler.enrichPool !== "function") {
+          log("WARN", `Pool enrich unsupported protocol`, `${pool.dexId} ${pool.protocolType}`);
+          return null;
+        }
+        return await handler.enrichPool(adapterCtx, pool, tokenCache, options);
+      } catch (err) {
+        log("WARN", `Pool enrich failed ${pool.dexId} ${pool.poolAddress}`, err?.message || String(err));
+        return null;
       }
-      enriched.push(await handler.enrichPool(adapterCtx, pool, tokenCache));
-    } catch (err) {
-      log("WARN", `Pool enrich failed ${pool.dexId} ${pool.poolAddress}`, err?.message || String(err));
-    }
-  }
+    },
+  );
 
-  return enriched;
+  return results.filter(Boolean);
+}
+
+async function hydrateSelectedPools(adapterCtx, pools, tokenCache) {
+  return adapterCtx.mapWithConcurrency(
+    pools,
+    adapterCtx.config.metadataConcurrency,
+    async (pool) => {
+      const provider = adapterCtx.activeProvider || adapterCtx.provider;
+      const token0 = await adapterCtx.getTokenMeta(provider, pool.token0.address, tokenCache, { includeMetadata: true });
+      const token1 = await adapterCtx.getTokenMeta(provider, pool.token1.address, tokenCache, { includeMetadata: true });
+
+      let tokens = pool.tokens;
+      if (Array.isArray(pool.tokens) && pool.tokens.length) {
+        tokens = await Promise.all(
+          pool.tokens.map(async (token) => {
+            const meta = await adapterCtx.getTokenMeta(provider, token.address, tokenCache, { includeMetadata: true });
+            return { ...token, name: meta.name, symbol: meta.symbol, decimals: meta.decimals };
+          }),
+        );
+      }
+
+      return { ...pool, token0, token1, tokens };
+    },
+  );
 }
 
 (async () => {
@@ -295,10 +348,13 @@ async function enrichPools(adapterCtx, discovered) {
     fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
     const provider = new JsonRpcProvider(RPC_URL);
+    const { mapWithConcurrency } = createAsyncHelpers();
     const { withRetry, getLogsChunked } = createRpcHelpers({
       retryCount: config.retryCount,
       retryDelayMs: config.retryDelayMs,
       log,
+      mapWithConcurrency,
+      logChunkConcurrency: config.logChunkConcurrency,
     });
 
     const getTokenMeta = createTokenMetaLoader({
@@ -306,7 +362,6 @@ async function enrichPools(adapterCtx, discovered) {
       erc20Abi: ERC20_ABI,
       withRetry,
     });
-
     const pricing = createPricingHelpers({
       round,
       toNumber,
@@ -322,20 +377,19 @@ async function enrichPools(adapterCtx, discovered) {
       log,
     });
 
-    const computeActivity = createActivityComputer({
+    const { computeActivity, computeActivities } = createActivityComputer({
       blockPerDay: config.blocksPerDay,
       enable7d: config.enable7dVolume,
       logMaxRange: config.logMaxRange,
       getLogsChunked,
-      withRetry,
+      mapWithConcurrency,
+      activityBatchSize: config.activityBatchSize,
+      activityBatchConcurrency: config.activityBatchConcurrency,
       v2SwapIface: V2_SWAP_IFACE,
       v3SwapIface: V3_SWAP_IFACE,
       lbSwapIface: LB_SWAP_IFACE,
       balancerSwapIface: BALANCER_SWAP_IFACE,
-      transferTopic: TRANSFER_TOPIC,
       pricing,
-      toNumber,
-      formatUnits,
       round,
     });
 
@@ -353,6 +407,7 @@ async function enrichPools(adapterCtx, discovered) {
       choosePairIndices,
       getTokenMeta,
       toNumber,
+      mapWithConcurrency,
       erc20Abi: ERC20_ABI,
       v2FactoryAbi: V2_FACTORY_ABI,
       v2PairAbi: V2_PAIR_ABI,
@@ -435,10 +490,12 @@ async function enrichPools(adapterCtx, discovered) {
     const discovered = await discoverPoolsByDex(adapterCtx, dexConfigs, latestBlock);
     log("DISCOVER", "Total discovered pools", discovered.length);
 
-    const enriched = await enrichPools(adapterCtx, discovered);
-    log("ENRICH", "Pools enriched", enriched.length);
+    const tokenCache = new Map();
+    const enriched = await enrichPools(adapterCtx, discovered, tokenCache, { includeMetadata: false });
+    log("ENRICH", "Pools enriched (light)", enriched.length);
 
     const priceMap = pricing.seedPrices(STABLE_PRICE_USD);
+    const anchorPriceTokens = new Set(PRICE_ANCHOR_TOKENS.map((token) => String(token).toLowerCase()));
     if (config.enableOraclePriceSeed && !config.targetTimestamp) {
       const wavaxAddress = constants.SEED_TOKENS[0].toLowerCase();
       if (!priceMap.has(wavaxAddress)) {
@@ -449,6 +506,7 @@ async function enrichPools(adapterCtx, discovered) {
         );
         if (oraclePrice != null) {
           priceMap.set(wavaxAddress, oraclePrice);
+          anchorPriceTokens.add(wavaxAddress);
           log("PRICING", "Seeded WAVAX price from oracle", `${oraclePrice}`);
         } else {
           log("WARN", "WAVAX oracle seed unavailable", config.wavaxUsdOracle);
@@ -457,7 +515,11 @@ async function enrichPools(adapterCtx, discovered) {
     }
     const anchored = pricing.deriveStableAnchoredPrices(enriched, priceMap);
     log("PRICING", "Seeded direct stable-pair prices", anchored);
-    pricing.derivePrices(enriched, priceMap);
+    pricing.derivePrices(enriched, priceMap, {
+      anchorTokens: anchorPriceTokens,
+      minKnownSideUsdWeight: 10000,
+      maxPasses: 1,
+    });
 
     const byDex = new Map();
     for (const pool of enriched) {
@@ -466,41 +528,80 @@ async function enrichPools(adapterCtx, discovered) {
       byDex.set(pool.dexId, list);
     }
 
-    const selectedPools = [];
+    const selectedEntries = [];
     for (const [dexId, items] of byDex.entries()) {
+      const selectionTarget = Math.max(
+        config.topPoolsPerDex,
+        config.topPoolsPerDex * Math.max(1, config.selectionMultiplier),
+      );
       const top = items
         .sort((a, b) => b.liquidityUsd - a.liquidityUsd)
-        .slice(0, config.topPoolsPerDex)
-        .map((x) => x.pool);
-      log("FILTER", `DEX ${dexId} selected pools`, top.length);
-      selectedPools.push(...top);
+        .slice(0, selectionTarget);
+      log("FILTER", `DEX ${dexId} selected candidate pools`, top.length);
+      selectedEntries.push(...top);
     }
+
+    const prefilteredEntries = [];
+    let preSkippedLowLiquidity = 0;
+    for (const entry of selectedEntries) {
+      if ((entry.liquidityUsd || 0) < config.minLiquidityUsd) {
+        preSkippedLowLiquidity += 1;
+        continue;
+      }
+      prefilteredEntries.push(entry);
+    }
+    if (preSkippedLowLiquidity > 0) {
+      log("FILTER", "Pre-skipped selected pools below min liquidity", preSkippedLowLiquidity);
+    }
+
+    const finalizedPools = await hydrateSelectedPools(
+      adapterCtx,
+      prefilteredEntries.map((entry) => entry.pool),
+      tokenCache,
+    );
+    log("ENRICH", "Pools hydrated (metadata)", finalizedPools.length);
 
     const nowIso = config.targetTimestamp
       ? new Date(config.targetTimestamp).toISOString()
       : new Date().toISOString();
+    const activityMap = await computeActivities(
+      provider,
+      finalizedPools,
+      latestBlock,
+      priceMap,
+      { from24, from7d },
+    );
+    const rowResults = await mapWithConcurrency(
+      finalizedPools,
+      config.activityConcurrency,
+      async (pool) => {
+        const dexConfig = dexById.get(pool.dexId) || null;
+        const withPolicy = applyPoolFieldPolicy(pool, dexConfig, fieldPolicy);
+        const withRisk = await enrichContractRisk(withPolicy);
+        const liquidityUsd = pricing.computeLiquidityUsd(withRisk, priceMap);
+        const activity = activityMap.get(withRisk.poolAddress.toLowerCase()) || await computeActivity(
+          provider,
+          withRisk,
+          latestBlock,
+          priceMap,
+          { from24, from7d },
+        );
+        if (activity.error) {
+          log("WARN", `Activity fallback ${withRisk.dexId} ${withRisk.poolAddress}`, activity.error);
+        }
+        const row = output.normalizeRow(withRisk, activity, priceMap, liquidityUsd, nowIso);
+        return { row };
+      },
+    );
+
     const rows = [];
     const skipped = {
-      lowLiquidity: 0,
+      lowLiquidity: preSkippedLowLiquidity,
       noActivity24h: 0,
     };
 
-    for (const pool of selectedPools) {
-      const dexConfig = dexById.get(pool.dexId) || null;
-      const withPolicy = applyPoolFieldPolicy(pool, dexConfig, fieldPolicy);
-      const withRisk = await enrichContractRisk(withPolicy);
-      const liquidityUsd = pricing.computeLiquidityUsd(withRisk, priceMap);
-      const activity = await computeActivity(
-        provider,
-        withRisk,
-        latestBlock,
-        priceMap,
-        { from24, from7d },
-      );
-      if (activity.error) {
-        log("WARN", `Activity fallback ${withRisk.dexId} ${withRisk.poolAddress}`, activity.error);
-      }
-      const row = output.normalizeRow(withRisk, activity, priceMap, liquidityUsd, nowIso);
+    for (const result of rowResults) {
+      const row = result.row;
       if ((row.liquidityUsd || 0) < config.minLiquidityUsd) {
         skipped.lowLiquidity += 1;
         continue;

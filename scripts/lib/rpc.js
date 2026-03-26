@@ -1,4 +1,4 @@
-function createRpcHelpers({ retryCount, retryDelayMs, log }) {
+function createRpcHelpers({ retryCount, retryDelayMs, log, mapWithConcurrency, logChunkConcurrency }) {
   function sleep(ms) {
     return new Promise((r) => setTimeout(r, ms));
   }
@@ -25,18 +25,21 @@ function createRpcHelpers({ retryCount, retryDelayMs, log }) {
 
   async function getLogsChunked(provider, params, maxRange) {
     const { fromBlock, toBlock } = params;
-    const out = [];
-
+    const ranges = [];
     for (let start = fromBlock; start <= toBlock; start += maxRange + 1) {
-      const end = Math.min(toBlock, start + maxRange);
-      const chunk = await withRetry(
-        () => provider.getLogs({ ...params, fromBlock: start, toBlock: end }),
-        `eth_getLogs ${params.address} ${start}-${end}`,
-      );
-      out.push(...chunk);
+      ranges.push([start, Math.min(toBlock, start + maxRange)]);
     }
 
-    return out;
+    const chunks = await mapWithConcurrency(
+      ranges,
+      logChunkConcurrency,
+      async ([start, end]) => withRetry(
+        () => provider.getLogs({ ...params, fromBlock: start, toBlock: end }),
+        `eth_getLogs ${params.address} ${start}-${end}`,
+      ),
+    );
+
+    return chunks.flat();
   }
 
   return { withRetry, getLogsChunked };
