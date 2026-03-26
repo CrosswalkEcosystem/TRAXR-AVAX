@@ -8,8 +8,6 @@ import { RollingStats } from "@/components/RollingStats";
 
 const featureEnabled =
   (process.env.NEXT_PUBLIC_TRAXR_ENABLED ?? "true") === "true";
-const maintenanceMode =
-  (process.env.NEXT_PUBLIC_TRAXR_MAINTENANCE ?? "true") === "true";
 
 export default function Home() {
   const [pools, setPools] = useState<TraxrScoreResult[]>([]);
@@ -59,12 +57,7 @@ export default function Home() {
     <main className="relative min-h-screen overflow-hidden px-6 py-10 sm:px-10 lg:px-16">
       <div className="pointer-events-none absolute inset-0 gridlines opacity-40" />
 
-      <div
-        className={`relative mx-auto flex max-w-6xl flex-col gap-10 text-white transition ${
-          maintenanceMode ? "pointer-events-none select-none blur-sm" : ""
-        }`}
-        aria-hidden={maintenanceMode}
-      >
+      <div className="relative mx-auto flex max-w-6xl flex-col gap-10 text-white transition">
         {/* HERO */}
         <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-[#0b1220]/90 via-[#0f1f36]/70 to-[#0b0f1d]/80 p-6 sm:p-8 shadow-[0_0_80px_rgba(0,255,255,0.14)]">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(0,255,255,0.12),transparent_35%),radial-gradient(circle_at_80%_0%,rgba(0,180,255,0.12),transparent_28%)]" />
@@ -237,22 +230,6 @@ export default function Home() {
         </footer>
       </div>
 
-      {maintenanceMode ? (
-        <div className="absolute inset-x-0 top-0 z-20 flex justify-center px-6 pt-8 sm:pt-10">
-          <div className="w-full max-w-2xl rounded-3xl border border-amber-300/30 bg-[#08111d]/78 px-8 py-8 text-center shadow-[0_0_80px_rgba(0,0,0,0.45)] backdrop-blur-xl">
-            <div className="text-xs font-semibold uppercase tracking-[0.38em] text-amber-200/80">
-              Under Maintenance
-            </div>
-            <h2 className="mt-4 text-3xl font-semibold text-white sm:text-4xl">
-              TRAXR-AVAX is temporarily unavailable
-            </h2>
-            <p className="mx-auto mt-4 max-w-xl text-sm text-white/70 sm:text-base">
-              We are recalculating pool snapshots and validating the AVAX fetch
-              pipeline. The dashboard will return once the data refresh is verified.
-            </p>
-          </div>
-        </div>
-      ) : null}
     </main>
   );
 }
