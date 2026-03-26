@@ -269,10 +269,6 @@ export function normalizePool(p: any): AvaxPoolMetrics {
         ? p.liquidityUsd
         : 0;
 
-  const isNativeRpcSnapshot =
-    p?.dataSource === "avalanche-rpc" ||
-    (typeof p?.addressSource === "string" && p.addressSource.startsWith("avalanche-rpc:"));
-
   return {
     poolId,
     poolRef: p.poolRef ?? undefined,
@@ -317,8 +313,12 @@ export function normalizePool(p: any): AvaxPoolMetrics {
 
     liquidityDepthUsd,
     liquidityConcentrationPct:
-      !isNativeRpcSnapshot && typeof p.liquidityConcentrationPct === "number"
+      typeof p.liquidityConcentrationPct === "number"
         ? p.liquidityConcentrationPct
+        : null,
+    reserveBalancePct:
+      typeof p.reserveBalancePct === "number"
+        ? p.reserveBalancePct
         : null,
     feeStabilityPct:
       typeof p.feeStabilityPct === "number"

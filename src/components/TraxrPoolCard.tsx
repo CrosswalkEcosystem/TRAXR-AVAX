@@ -44,7 +44,7 @@ export function TraxrPoolCard({ pool, onCompare, onTrend }: Props) {
   const feePct = typeof m.feePct === "number" ? m.feePct : 0;
   const feeDisplay = `${feePct.toFixed(2)}%`;
 
-  const concentration =
+  const reserveImbalance =
     typeof m.liquidityConcentrationPct === "number"
       ? `${m.liquidityConcentrationPct.toFixed(0)}%`
       : "Unknown";
@@ -178,31 +178,31 @@ export function TraxrPoolCard({ pool, onCompare, onTrend }: Props) {
             <div className="text-sm sm:text-base font-semibold text-white">
               {feeDisplay}
             </div>
-          </div>
-
-          {/* Concentration / Fee Stability */}
-          <div className="rounded-2xl border border-white/10 bg-black/20 px-3 py-2">
-            <div className="flex flex-wrap items-center gap-1 sm:justify-between">
-              <div className="text-[10px] sm:text-[11px] uppercase tracking-[0.16em] sm:tracking-[0.2em] text-white/40">
-                Concentration
-              </div>
-              <span className="text-[10px] uppercase tracking-wider text-white/30 whitespace-nowrap">
-                Raw
-              </span>
-            </div>
-            <div className="text-sm sm:text-base font-semibold text-white">
-              {concentration === "Unknown" ? (
-                <span title={unknownNote}>Unknown</span>
-              ) : (
-                concentration
-              )}
-            </div>
             <div className="mt-1 text-[10px] text-white/40">
               Fee stability:{" "}
               {feeStability === "Unknown" ? (
                 <span title={unknownNote}>Unknown</span>
               ) : (
                 feeStability
+              )}
+            </div>
+          </div>
+
+          {/* Reserve imbalance */}
+          <div className="rounded-2xl border border-white/10 bg-black/20 px-3 py-2">
+            <div className="flex flex-wrap items-center gap-1 sm:justify-between">
+              <div className="text-[10px] sm:text-[11px] uppercase tracking-[0.16em] sm:tracking-[0.2em] text-white/40">
+                Reserve Imbalance
+              </div>
+              <span className="text-[10px] uppercase tracking-wider text-white/30 whitespace-nowrap">
+                USD
+              </span>
+            </div>
+            <div className="text-sm sm:text-base font-semibold text-white">
+              {reserveImbalance === "Unknown" ? (
+                <span title={unknownNote}>Unknown</span>
+              ) : (
+                reserveImbalance
               )}
             </div>
           </div>

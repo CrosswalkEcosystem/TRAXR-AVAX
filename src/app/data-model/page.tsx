@@ -95,7 +95,7 @@ export default function DataModelPage() {
               </h2>
               <p className="mt-3 text-slate-300">
                 From core entities, TRAXR-AVAX derives normalized heuristics
-                such as liquidity depth, concentration, and execution resilience context. These are marked
+                such as liquidity depth, reserve imbalance, and execution resilience context. These are marked
                 as best-effort and never presented as protocol guarantees.
               </p>
             </section>
@@ -105,9 +105,9 @@ export default function DataModelPage() {
                 Scoring Signals (External)
               </h2>
               <p className="mt-3 text-slate-300">
-                Advanced signals such as liquidity concentration, fee stability,
-                and governance risk are produced by the scoring engine package.
-                Unknown values are intentional until resolved by that layer.
+                Advanced signals such as reserve imbalance, fee stability,
+                and governance risk are produced from normalized pool state and the scoring engine package.
+                Unknown values remain explicit when reserves or pricing context are insufficient.
               </p>
             </section>
 

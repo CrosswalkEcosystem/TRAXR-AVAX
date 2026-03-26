@@ -68,6 +68,10 @@ export default function MethodologyPage() {
                   Normalization into stable schema (`dataSource`, `addressSource`, pool/token fields, metrics).
                 </li>
                 <li>
+                  Derived reserve-side metrics such as reserve imbalance are computed from
+                  priced reserves, not from snapshot share-of-total shortcuts.
+                </li>
+                <li>
                   Scoring delegation to external npm engine (`@crosswalk.pro/traxr-cts-avax`).
                 </li>
                 <li>

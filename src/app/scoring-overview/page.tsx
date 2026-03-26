@@ -44,7 +44,7 @@ export default function ScoringOverviewPage() {
               <h2 className="text-lg font-medium sm:text-xl">Scoring Input</h2>
               <p className="mt-3 text-slate-300">
                 TRAXR consumes normalized pool metrics (liquidity depth, activity context,
-                execution resilience context, fee stability, contract posture, dependencies)
+                reserve imbalance, execution resilience context, fee stability, contract posture, dependencies)
                 and computes deterministic node values and final score.
               </p>
             </section>

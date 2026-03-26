@@ -9,9 +9,42 @@ function createOutputHelpers({ chain, round, safeDiv, confidenceFromPrices, outp
     return trimmed;
   }
 
+  function computeReserveBalancePct(pool, priceMap) {
+    if (Array.isArray(pool.tokens) && pool.tokens.length) {
+      const usdParts = pool.tokens
+        .map((token) => {
+          const price = priceMap.get(String(token.address || "").toLowerCase());
+          const amount = Number(token.amount || 0);
+          if (!Number.isFinite(price) || price == null || price <= 0) return null;
+          if (!Number.isFinite(amount) || amount <= 0) return null;
+          return amount * price;
+        })
+        .filter((value) => Number.isFinite(value) && value > 0);
+
+      if (usdParts.length < 2) return null;
+
+      const totalUsd = usdParts.reduce((sum, value) => sum + value, 0);
+      const largestUsd = Math.max(...usdParts);
+      const restUsd = totalUsd - largestUsd;
+      if (!(largestUsd > 0) || !(restUsd > 0)) return 0;
+      return round(100 * Math.min(largestUsd, restUsd) / Math.max(largestUsd, restUsd), 6);
+    }
+
+    const token0Price = priceMap.get(pool.token0.address.toLowerCase()) || null;
+    const token1Price = priceMap.get(pool.token1.address.toLowerCase()) || null;
+    if (token0Price == null || token1Price == null) return null;
+
+    const usd0 = (Number(pool.amount0) || 0) * token0Price;
+    const usd1 = (Number(pool.amount1) || 0) * token1Price;
+    if (!(usd0 > 0) || !(usd1 > 0)) return 0;
+
+    return round(100 * Math.min(usd0, usd1) / Math.max(usd0, usd1), 6);
+  }
+
   function normalizeRow(pool, activity, priceMap, liquidityUsd, nowIso) {
     const token0Price = priceMap.get(pool.token0.address.toLowerCase()) || null;
     const token1Price = priceMap.get(pool.token1.address.toLowerCase()) || null;
+    const reserveBalancePct = computeReserveBalancePct(pool, priceMap);
     const volatilityImpactPct = liquidityUsd > 0
       ? Math.min(100, safeDiv(activity.volume24hUsd, liquidityUsd) * 100)
       : 0;
@@ -41,7 +74,11 @@ function createOutputHelpers({ chain, round, safeDiv, confidenceFromPrices, outp
       feePct: typeof pool.feePct === "number" ? round(pool.feePct, 6) : 0,
       liquidityDepthUsd: liquidityUsd,
       volatilityImpactPct: round(volatilityImpactPct, 6),
-      liquidityConcentrationPct: null,
+      liquidityConcentrationPct:
+        typeof reserveBalancePct === "number"
+          ? round(Math.max(0, 100 - reserveBalancePct), 6)
+          : null,
+      reserveBalancePct,
       feeStabilityPct: typeof pool.feeStabilityPct === "number" ? round(pool.feeStabilityPct, 6) : 0,
       contractIsProxy: Boolean(pool.contractIsProxy),
       contractIsUpgradeable: Boolean(pool.contractIsUpgradeable),
@@ -58,11 +95,7 @@ function createOutputHelpers({ chain, round, safeDiv, confidenceFromPrices, outp
   }
 
   function applyLiquidityConcentration(rows) {
-    for (const row of rows) {
-      // Native RPC snapshots do not currently have a real per-pool concentration metric.
-      // Do not reuse pool share of total snapshot TVL as "concentration".
-      row.liquidityConcentrationPct = null;
-    }
+    return rows;
   }
 
   function latestGeckoFile() {

@@ -69,6 +69,7 @@ export type AvaxPoolMetrics = {
   // ----------------------------------
   liquidityDepthUsd: number;
   liquidityConcentrationPct: number | null;
+  reserveBalancePct?: number | null;
   feeStabilityPct: number | null;
   volatilityImpactPct: number | null;
 

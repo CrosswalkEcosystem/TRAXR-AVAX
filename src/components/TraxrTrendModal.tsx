@@ -111,11 +111,11 @@ const metricOptions: MetricOption[] = [
   },
   {
     key: "concentration",
-    label: "Concentration %",
+    label: "Reserve Imbalance %",
     icon: FiLayers,
     strokeClass: "stroke-yellow-300",
     dotClass: "bg-yellow-300",
-    description: "Liquidity concentration (best-effort).",
+    description: "USD reserve imbalance (best-effort).",
     format: formatPct,
   },
   {

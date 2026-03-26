@@ -1,7 +1,7 @@
 export default function TraxrDataModelMap() {
   const nodes = [
     { label: "Pool Contract", x: 250, y: 60 },
-    { label: "Liquidity Concentration", x: 410, y: 190 },
+    { label: "Reserve Imbalance", x: 410, y: 190 },
     { label: "Derived Metrics", x: 250, y: 320 },
     { label: "Protocol Flags", x: 90, y: 190 },
   ];

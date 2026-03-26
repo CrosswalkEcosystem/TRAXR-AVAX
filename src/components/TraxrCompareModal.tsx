@@ -57,7 +57,7 @@ const metricOptions: MetricOption[] = [
   { key: "liquidity", label: "Liquidity (USD)", icon: FiDroplet, description: "Total pool liquidity in USD (source feed)." },
   { key: "volume24h", label: "24h Volume (USD)", icon: FiActivity, description: "24h swap volume in USD (source feed)." },
   { key: "feePct", label: "Fee %", icon: FiPercent, description: "AMM trading fee percentage (lower is cheaper)." },
-  { key: "concentration", label: "Concentration %", icon: FiActivity, description: "Raw liquidity concentration from snapshot." },
+  { key: "concentration", label: "Reserve Imbalance %", icon: FiActivity, description: "USD reserve imbalance from current pool composition." },
   { key: "volatilityImpact", label: "Volatility Impact %", icon: FiTarget, description: "Price impact proxy from 24h volume." },
   { key: "warnings", label: "Signals", icon: FiAlertTriangle, description: "Count of risk/info signals from CTS checks." },
   { key: "depth", label: "Depth", icon: FiLayers, description: "Liquidity depth normalization." },
@@ -1113,12 +1113,12 @@ export function TraxrCompareModal({ open, pools, initialLeftId, onClose }: Props
                 tooltip="AMM trading fee percentage (lower is cheaper)."
               />
               <MetricRow
-                label="Concentration %"
+                label="Reserve Imbalance %"
                 left={leftConcentration}
                 right={rightConcentration}
                 direction="lower"
                 format={formatPct}
-                tooltip="Liquidity concentration (lower is better)."
+                tooltip="USD reserve imbalance across pool sides (lower is better)."
               />
               <MetricRow
                 label="Volatility Impact %"

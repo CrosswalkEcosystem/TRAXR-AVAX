@@ -24,7 +24,7 @@
     "feePct": 0.3,
     "liquidityDepthUsd": 226472.718461,
     "volatilityImpactPct": 0.486333,
-    "liquidityConcentrationPct": 0.004177,
+    "liquidityConcentrationPct": null,
     "feeStabilityPct": 90,
     "contractIsProxy": false,
     "contractIsUpgradeable": false,
@@ -37,8 +37,7 @@
       "router"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": 99.995823
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0x0e0100ab771e9288e0aa97e11557e6654c3a9665",
@@ -65,7 +64,7 @@
     "feePct": 0.3,
     "liquidityDepthUsd": 101400.912476,
     "volatilityImpactPct": 2.316374,
-    "liquidityConcentrationPct": 0.10518,
+    "liquidityConcentrationPct": null,
     "feeStabilityPct": 90,
     "contractIsProxy": false,
     "contractIsUpgradeable": false,
@@ -78,8 +77,7 @@
       "router"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": 99.89482
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0xe28984e1ee8d431346d32bec9ec800efb643eef4",
@@ -106,7 +104,7 @@
     "feePct": 0.3,
     "liquidityDepthUsd": 95768.136526,
     "volatilityImpactPct": 1.896981,
-    "liquidityConcentrationPct": 0.05766,
+    "liquidityConcentrationPct": null,
     "feeStabilityPct": 90,
     "contractIsProxy": false,
     "contractIsUpgradeable": false,
@@ -119,8 +117,7 @@
       "router"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": 99.94234
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0xed8cbd9f0ce3c6986b22002f03c6475ceb7a6256",
@@ -147,7 +144,7 @@
     "feePct": 0.3,
     "liquidityDepthUsd": 569095.396489,
     "volatilityImpactPct": 2.791971,
-    "liquidityConcentrationPct": 0.010053,
+    "liquidityConcentrationPct": null,
     "feeStabilityPct": 90,
     "contractIsProxy": false,
     "contractIsUpgradeable": false,
@@ -160,8 +157,7 @@
       "router"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": 99.989947
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0xfe15c2695f1f920da45c30aae47d11de51007af9",
@@ -188,7 +184,7 @@
     "feePct": 0.3,
     "liquidityDepthUsd": 496689.111719,
     "volatilityImpactPct": 0.502747,
-    "liquidityConcentrationPct": 0.001905,
+    "liquidityConcentrationPct": null,
     "feeStabilityPct": 90,
     "contractIsProxy": false,
     "contractIsUpgradeable": false,
@@ -201,8 +197,7 @@
       "router"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": 99.998095
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0x2a8a315e82f85d1f0658c5d66a452bbdd9356783",
@@ -229,7 +224,7 @@
     "feePct": 0.3,
     "liquidityDepthUsd": 477925.139782,
     "volatilityImpactPct": 0.058414,
-    "liquidityConcentrationPct": 0.265953,
+    "liquidityConcentrationPct": null,
     "feeStabilityPct": 90,
     "contractIsProxy": false,
     "contractIsUpgradeable": false,
@@ -242,8 +237,7 @@
       "router"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": 99.734047
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0x7abab5474385918820dfbc7f35712084a91b583a",
@@ -270,7 +264,7 @@
     "feePct": 0.3,
     "liquidityDepthUsd": 7341.59545,
     "volatilityImpactPct": 0,
-    "liquidityConcentrationPct": 0.027354,
+    "liquidityConcentrationPct": null,
     "feeStabilityPct": 90,
     "contractIsProxy": false,
     "contractIsUpgradeable": false,
@@ -283,8 +277,7 @@
       "router"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": 99.972646
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0x5fc70cf6a4a858cf4124013047e408367eba1ace",
@@ -311,7 +304,7 @@
     "feePct": 0.3,
     "liquidityDepthUsd": 7060.042317,
     "volatilityImpactPct": 3.557431,
-    "liquidityConcentrationPct": 0.005807,
+    "liquidityConcentrationPct": null,
     "feeStabilityPct": 90,
     "contractIsProxy": false,
     "contractIsUpgradeable": false,
@@ -324,8 +317,7 @@
       "router"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": 99.994193
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0xc25251390dc341daeb0b928dd7113aeec7504a2c",
@@ -352,7 +344,7 @@
     "feePct": 0.3,
     "liquidityDepthUsd": 6801.027296,
     "volatilityImpactPct": 0.003718,
-    "liquidityConcentrationPct": 0.175151,
+    "liquidityConcentrationPct": null,
     "feeStabilityPct": 90,
     "contractIsProxy": false,
     "contractIsUpgradeable": false,
@@ -365,8 +357,7 @@
       "router"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": 99.824849
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0xbea1c859606d7f44b0ca85509607e0026635db94",
@@ -393,7 +384,7 @@
     "feePct": 0.3,
     "liquidityDepthUsd": 3888.119089,
     "volatilityImpactPct": 0.140798,
-    "liquidityConcentrationPct": 0,
+    "liquidityConcentrationPct": null,
     "feeStabilityPct": 90,
     "contractIsProxy": false,
     "contractIsUpgradeable": false,
@@ -406,8 +397,7 @@
       "router"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": 100
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0x736954f536de2e7edd97c9789c7a62d62338aa38",
@@ -447,8 +437,7 @@
       "router"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": null
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0x43bb2157bc5ea1541f852c6c5844fa555d313a3b",
@@ -488,8 +477,7 @@
       "router"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": null
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0xfebf47cf89f766e6c24317b17f862ba5d4d82f8c",
@@ -529,8 +517,7 @@
       "router"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": null
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0xaf91700c900a1c348b277be5adcd9458c3007254",
@@ -570,8 +557,7 @@
       "router"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": null
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0x490c69b3a746a10b163f1e9a5674f2057d3d956f",
@@ -598,7 +584,7 @@
     "feePct": 0.3,
     "liquidityDepthUsd": 99.692046,
     "volatilityImpactPct": 1.229821,
-    "liquidityConcentrationPct": 0.056713,
+    "liquidityConcentrationPct": null,
     "feeStabilityPct": 90,
     "contractIsProxy": false,
     "contractIsUpgradeable": false,
@@ -611,8 +597,7 @@
       "router"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": 99.943287
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0x6b00325bc678e0fbcbd7d4be4eb0785408860176",
@@ -639,7 +624,7 @@
     "feePct": 0.3,
     "liquidityDepthUsd": 3093.273106,
     "volatilityImpactPct": 1.826814,
-    "liquidityConcentrationPct": 0.03175,
+    "liquidityConcentrationPct": null,
     "feeStabilityPct": 90,
     "contractIsProxy": false,
     "contractIsUpgradeable": false,
@@ -652,8 +637,7 @@
       "router"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": 99.96825
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0x436929ce28f0b45891f8ef33b615ed578e93401c",
@@ -680,7 +664,7 @@
     "feePct": 0.3,
     "liquidityDepthUsd": 586.967557,
     "volatilityImpactPct": 0.320377,
-    "liquidityConcentrationPct": 0.048993,
+    "liquidityConcentrationPct": null,
     "feeStabilityPct": 90,
     "contractIsProxy": false,
     "contractIsUpgradeable": false,
@@ -693,8 +677,7 @@
       "router"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": 99.951007
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0x6c2038f09212dac0ad30be822f0eecfb29064814",
@@ -734,8 +717,7 @@
       "router"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": null
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0xc82c535ac8a665b8a2c1a414a8bb0a3cc7923c77",
@@ -762,7 +744,7 @@
     "feePct": 0.3,
     "liquidityDepthUsd": 31072.089536,
     "volatilityImpactPct": 0.008112,
-    "liquidityConcentrationPct": 0.191804,
+    "liquidityConcentrationPct": null,
     "feeStabilityPct": 90,
     "contractIsProxy": false,
     "contractIsUpgradeable": false,
@@ -775,8 +757,7 @@
       "router"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": 99.808196
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0x6539bf462f73ff9497054ba261c195da8639ed61",
@@ -803,7 +784,7 @@
     "feePct": 0.3,
     "liquidityDepthUsd": 6501.480886,
     "volatilityImpactPct": 2.207875,
-    "liquidityConcentrationPct": 0.100085,
+    "liquidityConcentrationPct": null,
     "feeStabilityPct": 90,
     "contractIsProxy": false,
     "contractIsUpgradeable": false,
@@ -816,8 +797,7 @@
       "router"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": 99.899915
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0x4ed65dab34d5fd4b1eb384432027ce47e90e1185",
@@ -844,7 +824,7 @@
     "feePct": 0.3,
     "liquidityDepthUsd": 967.920568,
     "volatilityImpactPct": 1.572323,
-    "liquidityConcentrationPct": 0.063574,
+    "liquidityConcentrationPct": null,
     "feeStabilityPct": 90,
     "contractIsProxy": false,
     "contractIsUpgradeable": false,
@@ -857,8 +837,7 @@
       "router"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": 99.936426
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0x2f1da4bafd5f2508ec2e2e425036063a374993b6",
@@ -885,7 +864,7 @@
     "feePct": 0,
     "liquidityDepthUsd": 38035.848371,
     "volatilityImpactPct": 27.168698,
-    "liquidityConcentrationPct": 74.086522,
+    "liquidityConcentrationPct": null,
     "feeStabilityPct": 75,
     "contractIsProxy": false,
     "contractIsUpgradeable": false,
@@ -898,8 +877,7 @@
       "router"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": 25.913478
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0xa161cc5e37ddb1284567958874122c9816903d54",
@@ -939,8 +917,7 @@
       "router"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": null
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0x54dbb2c08c4a73d78c0080c5aaf7e32147b230e6",
@@ -980,8 +957,7 @@
       "router"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": null
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0x7842f0b4b5cacaaa8eb07a2b2fb6a5b972ced05b",
@@ -1021,8 +997,7 @@
       "positions_nft"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": null
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0x175183b2ffe0aa45f5c9e095d09be43e8ab464bd",
@@ -1062,8 +1037,7 @@
       "positions_nft"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": null
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0x661cd6b2df89a39883779958c94c2ad65a12fb4c",
@@ -1103,8 +1077,7 @@
       "positions_nft"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": null
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0x8e600715db997e1b3bbd884841a840095947cfbc",
@@ -1144,8 +1117,7 @@
       "router"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": null
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0x3c5f68d2f72debba4900c60f32eb8629876401f2",
@@ -1172,7 +1144,7 @@
     "feePct": 0.3,
     "liquidityDepthUsd": 58214.674839,
     "volatilityImpactPct": 1.312115,
-    "liquidityConcentrationPct": 0,
+    "liquidityConcentrationPct": null,
     "feeStabilityPct": 90,
     "contractIsProxy": false,
     "contractIsUpgradeable": false,
@@ -1185,8 +1157,7 @@
       "router"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": 100
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0x7ac8a8b4c6f0d5b025626b8ddc3cbc92c2a9cc83",
@@ -1226,8 +1197,7 @@
       "router"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": null
+    "dataSource": "avalanche-rpc"
   },
   {
     "poolRef": "avax_0x1a3a96efcf91a6f0d3bdba9826fa26f347dbb1b3",
@@ -1267,7 +1237,6 @@
       "router"
     ],
     "poolUpdatedAt": "2026-03-25T12:15:27.716Z",
-    "dataSource": "avalanche-rpc",
-    "reserveBalancePct": null
+    "dataSource": "avalanche-rpc"
   }
 ]
