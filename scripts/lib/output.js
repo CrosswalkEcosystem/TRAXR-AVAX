@@ -34,15 +34,8 @@ function createOutputHelpers({ chain, round, safeDiv, confidenceFromPrices, outp
     const token1Price = priceMap.get(pool.token1.address.toLowerCase()) || null;
     if (token0Price == null || token1Price == null) return null;
 
-    const balanceAmount0 = Number(
-      typeof pool.reserveBalanceAmount0 === "number" ? pool.reserveBalanceAmount0 : pool.amount0,
-    ) || 0;
-    const balanceAmount1 = Number(
-      typeof pool.reserveBalanceAmount1 === "number" ? pool.reserveBalanceAmount1 : pool.amount1,
-    ) || 0;
-
-    const usd0 = balanceAmount0 * token0Price;
-    const usd1 = balanceAmount1 * token1Price;
+    const usd0 = (Number(pool.amount0) || 0) * token0Price;
+    const usd1 = (Number(pool.amount1) || 0) * token1Price;
     if (!(usd0 > 0) || !(usd1 > 0)) return 0;
 
     return round(100 * Math.min(usd0, usd1) / Math.max(usd0, usd1), 6);

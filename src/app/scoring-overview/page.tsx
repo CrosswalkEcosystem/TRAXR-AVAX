@@ -47,6 +47,10 @@ export default function ScoringOverviewPage() {
                 reserve imbalance, execution resilience context, fee stability, contract posture, dependencies)
                 and computes deterministic node values and final score.
               </p>
+              <p className="mt-3 text-slate-300">
+                Reserve imbalance is derived from full-pool USD reserve composition so the metric
+                stays comparable across V2, V3, LB, and Balancer-style pools.
+              </p>
             </section>
 
             <section className="mt-10">

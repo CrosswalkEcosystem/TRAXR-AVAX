@@ -110,8 +110,6 @@ const LB_PAIR_ABI = [
   "function getTokenY() view returns (address)",
   "function getReserves() view returns (uint128 reserveX, uint128 reserveY)",
   "function getBinStep() view returns (uint16)",
-  "function getActiveId() view returns (uint24)",
-  "function getBin(uint24 id) view returns (uint128 binReserveX, uint128 binReserveY)",
 ];
 const BALANCER_VAULT_ABI = [
   "function getPoolTokens(bytes32 poolId) view returns (address[] tokens, uint256[] balances, uint256 lastChangeBlock)",

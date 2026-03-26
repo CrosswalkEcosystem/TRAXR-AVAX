@@ -44,8 +44,6 @@ const LB_PAIR_ABI = [
   "function getTokenY() view returns (address)",
   "function getReserves() view returns (uint128 reserveX, uint128 reserveY)",
   "function getBinStep() view returns (uint16)",
-  "function getActiveId() view returns (uint24)",
-  "function getBin(uint24 id) view returns (uint128 binReserveX, uint128 binReserveY)",
 ];
 const BALANCER_VAULT_ABI = [
   "function getPoolTokens(bytes32 poolId) view returns (address[] tokens, uint256[] balances, uint256 lastChangeBlock)",
@@ -188,15 +186,8 @@ function computeReserveBalancePct(pool, priceMap) {
   const p1 = priceMap.get(pool.token1.address.toLowerCase()) || null;
   if (p0 == null || p1 == null) return null;
 
-  const balanceAmount0 = Number(
-    typeof pool.reserveBalanceAmount0 === "number" ? pool.reserveBalanceAmount0 : pool.amount0,
-  ) || 0;
-  const balanceAmount1 = Number(
-    typeof pool.reserveBalanceAmount1 === "number" ? pool.reserveBalanceAmount1 : pool.amount1,
-  ) || 0;
-
-  const usd0 = balanceAmount0 * p0;
-  const usd1 = balanceAmount1 * p1;
+  const usd0 = (Number(pool.amount0) || 0) * p0;
+  const usd1 = (Number(pool.amount1) || 0) * p1;
   if (!(usd0 > 0) || !(usd1 > 0)) return 0;
   return round(100 * Math.min(usd0, usd1) / Math.max(usd0, usd1), 6);
 }

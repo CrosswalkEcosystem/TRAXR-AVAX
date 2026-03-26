@@ -69,7 +69,8 @@ export default function MethodologyPage() {
                 </li>
                 <li>
                   Derived reserve-side metrics such as reserve imbalance are computed from
-                  priced reserves, not from snapshot share-of-total shortcuts.
+                  priced full-pool reserves, not from snapshot share-of-total shortcuts
+                  or protocol-specific active-range slices.
                 </li>
                 <li>
                   Scoring delegation to external npm engine (`@crosswalk.pro/traxr-cts-avax`).
