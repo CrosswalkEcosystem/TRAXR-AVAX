@@ -1,7 +1,7 @@
 {
   "dexId": "uniswap-v3-avalanche",
-  "lastIndexedBlock": 81901716,
-  "latestBlockAtRun": 81901716,
+  "lastIndexedBlock": 81986509,
+  "latestBlockAtRun": 81986509,
   "fullyIndexed": true,
   "pools": [
     {
@@ -122,6 +122,13 @@
       "poolAddress": "0xf56C02ba2089619B99b19D8897E4f409F30e554d",
       "feePct": 0.3,
       "eventBlock": 81822695
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0xc0947aA926909259fdEc9Adb6730F59501857777",
+      "feePct": 0.3,
+      "eventBlock": 81924325
     }
   ]
 }
