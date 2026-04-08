@@ -1,7 +1,7 @@
 {
   "dexId": "balancer-v2-avalanche",
-  "latestBlockAtRun": 82323999,
-  "nextToBlock": 45060637,
+  "latestBlockAtRun": 82407690,
+  "nextToBlock": 44260237,
   "fullyIndexed": false,
   "pools": [
     {
@@ -183,6 +183,42 @@
       "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
       "feePct": null,
       "eventBlock": 47413008
+    },
+    {
+      "dexId": "balancer-v2-avalanche",
+      "protocolType": "balancer",
+      "poolAddress": "0xb1e42e90c5fa43956838f2290da567fedbb28edb",
+      "poolId": "0xb1e42e90c5fa43956838f2290da567fedbb28edb00000000000000000000004c",
+      "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "feePct": null,
+      "eventBlock": 44972818
+    },
+    {
+      "dexId": "balancer-v2-avalanche",
+      "protocolType": "balancer",
+      "poolAddress": "0xe3f0b00eb41395308120cc986286066725c6116e",
+      "poolId": "0xe3f0b00eb41395308120cc986286066725c6116e00000000000000000000004d",
+      "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "feePct": null,
+      "eventBlock": 44973706
+    },
+    {
+      "dexId": "balancer-v2-avalanche",
+      "protocolType": "balancer",
+      "poolAddress": "0x46463a97da555dba53dcd71dbbc256436eb65684",
+      "poolId": "0x46463a97da555dba53dcd71dbbc256436eb6568400020000000000000000004b",
+      "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "feePct": null,
+      "eventBlock": 44640636
+    },
+    {
+      "dexId": "balancer-v2-avalanche",
+      "protocolType": "balancer",
+      "poolAddress": "0x58892ccbaf25f585862a3b8504d7a69dca2cc661",
+      "poolId": "0x58892ccbaf25f585862a3b8504d7a69dca2cc66100010000000000000000004a",
+      "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "feePct": null,
+      "eventBlock": 44632633
     }
   ]
 }
