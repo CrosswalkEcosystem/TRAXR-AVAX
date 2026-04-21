@@ -1,7 +1,7 @@
 {
   "dexId": "balancer-v2-avalanche",
-  "latestBlockAtRun": 83410884,
-  "nextToBlock": 34655437,
+  "latestBlockAtRun": 83496041,
+  "nextToBlock": 33855037,
   "fullyIndexed": false,
   "pools": [
     {
@@ -579,6 +579,60 @@
       "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
       "feePct": null,
       "eventBlock": 34759530
+    },
+    {
+      "dexId": "balancer-v2-avalanche",
+      "protocolType": "balancer",
+      "poolAddress": "0xbf3e9c69a997776cd83cbd80cf22095c916e39b8",
+      "poolId": "0xbf3e9c69a997776cd83cbd80cf22095c916e39b8000200000000000000000021",
+      "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "feePct": null,
+      "eventBlock": 33981483
+    },
+    {
+      "dexId": "balancer-v2-avalanche",
+      "protocolType": "balancer",
+      "poolAddress": "0xfd2620c9cfcec7d152467633b3b0ca338d3d78cc",
+      "poolId": "0xfd2620c9cfcec7d152467633b3b0ca338d3d78cc00000000000000000000001c",
+      "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "feePct": null,
+      "eventBlock": 33919691
+    },
+    {
+      "dexId": "balancer-v2-avalanche",
+      "protocolType": "balancer",
+      "poolAddress": "0xc13546b97b9b1b15372368dc06529d7191081f5b",
+      "poolId": "0xc13546b97b9b1b15372368dc06529d7191081f5b00000000000000000000001d",
+      "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "feePct": null,
+      "eventBlock": 33919771
+    },
+    {
+      "dexId": "balancer-v2-avalanche",
+      "protocolType": "balancer",
+      "poolAddress": "0xb26f0e66317846bd5fe0cbaa1d269f0efeb05c96",
+      "poolId": "0xb26f0e66317846bd5fe0cbaa1d269f0efeb05c9600000000000000000000001e",
+      "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "feePct": null,
+      "eventBlock": 33919838
+    },
+    {
+      "dexId": "balancer-v2-avalanche",
+      "protocolType": "balancer",
+      "poolAddress": "0x9fa6ab3d78984a69e712730a2227f20bcc8b5ad9",
+      "poolId": "0x9fa6ab3d78984a69e712730a2227f20bcc8b5ad900000000000000000000001f",
+      "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "feePct": null,
+      "eventBlock": 33919921
+    },
+    {
+      "dexId": "balancer-v2-avalanche",
+      "protocolType": "balancer",
+      "poolAddress": "0x96518f83d66bdc6a5812f01c54f8e022f6796399",
+      "poolId": "0x96518f83d66bdc6a5812f01c54f8e022f6796399000200000000000000000020",
+      "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "feePct": null,
+      "eventBlock": 33920037
     }
   ]
 }
