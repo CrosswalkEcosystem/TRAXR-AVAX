@@ -1,7 +1,7 @@
 {
   "dexId": "uniswap-v3-avalanche",
-  "lastIndexedBlock": 83496041,
-  "latestBlockAtRun": 83496041,
+  "lastIndexedBlock": 83580237,
+  "latestBlockAtRun": 83580237,
   "fullyIndexed": true,
   "pools": [
     {
@@ -227,6 +227,76 @@
       "poolAddress": "0x79D66E46f9DF99e50A5FF3C5ef9CFbfE9Df3CD0c",
       "feePct": 0.3,
       "eventBlock": 83436776
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0x33bf31595e71301c8e9C2c7F381593Edd484462a",
+      "feePct": 0.3,
+      "eventBlock": 83540248
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0x688D912eCeA44Dc5C6543B9D15F593F3c73b354e",
+      "feePct": 0.3,
+      "eventBlock": 83540662
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0x80A7E36f20D74C4D6647506b8353d0A66FF2dE06",
+      "feePct": 0.3,
+      "eventBlock": 83540732
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0x92eCEE5995bf7eb09A61CDDa682DFfa426D208ad",
+      "feePct": 0.3,
+      "eventBlock": 83540849
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0x4e8284995E5E60Ed27e0A2A54b57F5D11b5Be3C2",
+      "feePct": 0.3,
+      "eventBlock": 83541117
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0xEEC68a52bfc8cB46E99A80e6b23670E4dC460AC7",
+      "feePct": 0.3,
+      "eventBlock": 83541135
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0xa7633b1c35Cc49c12B9B62eF8B4172F481509Cb0",
+      "feePct": 0.3,
+      "eventBlock": 83541187
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0xE6693d10c4E33E076E0a8Bb44CF9498B23FdCfb3",
+      "feePct": 0.3,
+      "eventBlock": 83541208
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0x6807eb3843d11583FB32c5308AF7c6E0A91d5A9D",
+      "feePct": 0.3,
+      "eventBlock": 83541234
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0xd0fa42cA3e69E8D9241C001aD9dF81BB6218ff55",
+      "feePct": 0.3,
+      "eventBlock": 83541255
     }
   ]
 }
