@@ -1,7 +1,7 @@
 {
   "dexId": "balancer-v2-avalanche",
-  "latestBlockAtRun": 83580237,
-  "nextToBlock": 33054637,
+  "latestBlockAtRun": 83664770,
+  "nextToBlock": 32254237,
   "fullyIndexed": false,
   "pools": [
     {
@@ -669,6 +669,105 @@
       "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
       "feePct": null,
       "eventBlock": 33222058
+    },
+    {
+      "dexId": "balancer-v2-avalanche",
+      "protocolType": "balancer",
+      "poolAddress": "0x670734d704eb7ef424d75321670f921fbf42e9cf",
+      "poolId": "0x670734d704eb7ef424d75321670f921fbf42e9cf000000000000000000000016",
+      "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "feePct": null,
+      "eventBlock": 32844830
+    },
+    {
+      "dexId": "balancer-v2-avalanche",
+      "protocolType": "balancer",
+      "poolAddress": "0x3bde1563903ebb564ca37d5736afbb850929cfd7",
+      "poolId": "0x3bde1563903ebb564ca37d5736afbb850929cfd7000200000000000000000017",
+      "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "feePct": null,
+      "eventBlock": 32845067
+    },
+    {
+      "dexId": "balancer-v2-avalanche",
+      "protocolType": "balancer",
+      "poolAddress": "0xece571847897fd61e764d455dc15cf1cd9de8d6f",
+      "poolId": "0xece571847897fd61e764d455dc15cf1cd9de8d6f000000000000000000000014",
+      "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "feePct": null,
+      "eventBlock": 32844180
+    },
+    {
+      "dexId": "balancer-v2-avalanche",
+      "protocolType": "balancer",
+      "poolAddress": "0x054e7b0c73e1ee5aed6864fa511658fc2b54bcaa",
+      "poolId": "0x054e7b0c73e1ee5aed6864fa511658fc2b54bcaa000000000000000000000015",
+      "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "feePct": null,
+      "eventBlock": 32844354
+    },
+    {
+      "dexId": "balancer-v2-avalanche",
+      "protocolType": "balancer",
+      "poolAddress": "0xa1d14d922a575232066520eda11e27760946c991",
+      "poolId": "0xa1d14d922a575232066520eda11e27760946c991000000000000000000000012",
+      "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "feePct": null,
+      "eventBlock": 32815711
+    },
+    {
+      "dexId": "balancer-v2-avalanche",
+      "protocolType": "balancer",
+      "poolAddress": "0xa154009870e9b6431305f19b09f9cfd7284d4e7a",
+      "poolId": "0xa154009870e9b6431305f19b09f9cfd7284d4e7a000000000000000000000013",
+      "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "feePct": null,
+      "eventBlock": 32815834
+    },
+    {
+      "dexId": "balancer-v2-avalanche",
+      "protocolType": "balancer",
+      "poolAddress": "0x55bec22f8f6c69137ceaf284d9b441db1b9bfedc",
+      "poolId": "0x55bec22f8f6c69137ceaf284d9b441db1b9bfedc000200000000000000000011",
+      "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "feePct": null,
+      "eventBlock": 32585324
+    },
+    {
+      "dexId": "balancer-v2-avalanche",
+      "protocolType": "balancer",
+      "poolAddress": "0xeb496161099d45b3ea4892408ef745c6182eb56e",
+      "poolId": "0xeb496161099d45b3ea4892408ef745c6182eb56e00000000000000000000000e",
+      "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "feePct": null,
+      "eventBlock": 32517264
+    },
+    {
+      "dexId": "balancer-v2-avalanche",
+      "protocolType": "balancer",
+      "poolAddress": "0xea67626e1f0b59e0d172a04f5702ef90bcdf440c",
+      "poolId": "0xea67626e1f0b59e0d172a04f5702ef90bcdf440c00000000000000000000000f",
+      "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "feePct": null,
+      "eventBlock": 32517605
+    },
+    {
+      "dexId": "balancer-v2-avalanche",
+      "protocolType": "balancer",
+      "poolAddress": "0x7275c131b1f67e8b53b4691f92b0e35a4c1c6e22",
+      "poolId": "0x7275c131b1f67e8b53b4691f92b0e35a4c1c6e22000000000000000000000010",
+      "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "feePct": null,
+      "eventBlock": 32517654
+    },
+    {
+      "dexId": "balancer-v2-avalanche",
+      "protocolType": "balancer",
+      "poolAddress": "0x9fd66b741ac546055e04e768dd52edd33574d453",
+      "poolId": "0x9fd66b741ac546055e04e768dd52edd33574d45300000000000000000000000d",
+      "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "feePct": null,
+      "eventBlock": 32478838
     }
   ]
 }
