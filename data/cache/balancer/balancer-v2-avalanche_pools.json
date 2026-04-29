@@ -1,7 +1,7 @@
 {
   "dexId": "balancer-v2-avalanche",
-  "latestBlockAtRun": 84165508,
-  "nextToBlock": 29853037,
+  "latestBlockAtRun": 84168151,
+  "nextToBlock": 29052637,
   "fullyIndexed": false,
   "pools": [
     {
@@ -786,6 +786,51 @@
       "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
       "feePct": null,
       "eventBlock": 30977218
+    },
+    {
+      "dexId": "balancer-v2-avalanche",
+      "protocolType": "balancer",
+      "poolAddress": "0xf1b3256505159f6004da0b16e985ee46e6ffeea8",
+      "poolId": "0xf1b3256505159f6004da0b16e985ee46e6ffeea800020000000000000000000a",
+      "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "feePct": null,
+      "eventBlock": 29639680
+    },
+    {
+      "dexId": "balancer-v2-avalanche",
+      "protocolType": "balancer",
+      "poolAddress": "0xed3e2f496cbcd8e212192fb8d1499842f04a0d19",
+      "poolId": "0xed3e2f496cbcd8e212192fb8d1499842f04a0d19000000000000000000000009",
+      "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "feePct": null,
+      "eventBlock": 29513485
+    },
+    {
+      "dexId": "balancer-v2-avalanche",
+      "protocolType": "balancer",
+      "poolAddress": "0xa826a114b0c7db4d1ff4a4be845a78998c64564c",
+      "poolId": "0xa826a114b0c7db4d1ff4a4be845a78998c64564c000000000000000000000008",
+      "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "feePct": null,
+      "eventBlock": 29512683
+    },
+    {
+      "dexId": "balancer-v2-avalanche",
+      "protocolType": "balancer",
+      "poolAddress": "0x3fb81f6fb0dd94c6fc7e138887f1ca4cdb5e2999",
+      "poolId": "0x3fb81f6fb0dd94c6fc7e138887f1ca4cdb5e2999000100000000000000000006",
+      "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "feePct": null,
+      "eventBlock": 29221754
+    },
+    {
+      "dexId": "balancer-v2-avalanche",
+      "protocolType": "balancer",
+      "poolAddress": "0xea4643102dfc03d5e382e7827bf767f6587e9965",
+      "poolId": "0xea4643102dfc03d5e382e7827bf767f6587e9965000000000000000000000007",
+      "vaultAddress": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+      "feePct": null,
+      "eventBlock": 29222656
     }
   ]
 }
