@@ -1,7 +1,7 @@
 {
   "dexId": "balancer-v2-avalanche",
-  "latestBlockAtRun": 86647001,
-  "nextToBlock": 6641437,
+  "latestBlockAtRun": 86726434,
+  "nextToBlock": 5841037,
   "fullyIndexed": false,
   "pools": [
     {
