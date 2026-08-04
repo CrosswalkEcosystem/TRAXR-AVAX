@@ -1,8 +1,8 @@
 {
   "dexId": "uniswap-v3-avalanche",
-  "lastIndexedBlock": 88352560,
-  "latestBlockAtRun": 88352560,
-  "fullyIndexed": true,
+  "lastIndexedBlock": 91354059,
+  "latestBlockAtRun": 91989078,
+  "fullyIndexed": false,
   "pools": [
     {
       "dexId": "uniswap-v3-avalanche",
@@ -409,6 +409,237 @@
       "poolAddress": "0x7E644b44b4aB4702276D53A1E3DA515eCAB267e9",
       "feePct": 0.05,
       "eventBlock": 87144427
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0xb33AE454e086b8A0e0FD1168aD89CD2B63f7B1C6",
+      "feePct": 1,
+      "eventBlock": 88613327
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0xef70910A5A06DF763D88B9c4cE0F662dFf22dBc8",
+      "feePct": 1,
+      "eventBlock": 88627641
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0x4415ee8Ea96D6C38b5DACF247Baf1ce1Fd3c028B",
+      "feePct": 0.05,
+      "eventBlock": 88924308
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0x6A9A51A1Cc777847EE4894DE1f245E9e9c1BD3b7",
+      "feePct": 0.05,
+      "eventBlock": 88924470
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0x833E0fF43A8691F623Cb8730DDB3e3180c7dE08B",
+      "feePct": 0.05,
+      "eventBlock": 89031144
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0x8b9138F0de85336852E50453279963044B0bAF8C",
+      "feePct": 1,
+      "eventBlock": 89575447
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0xA5f3fC786d020E5330460330956dE28856a3620e",
+      "feePct": 1,
+      "eventBlock": 89615876
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0xbBd1a49C4588DC71BB10b60147b9e181c87007E2",
+      "feePct": 1,
+      "eventBlock": 89646318
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0x6e2CB5BC6F3EF1B01739392324eF3c9FE286B30A",
+      "feePct": 1,
+      "eventBlock": 89660988
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0x8cF7A26202b9e835a19e3135cdfbbe0F118AD764",
+      "feePct": 1,
+      "eventBlock": 89917990
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0x7f9c812ED88ad43c467fB62c23B87803277Aeb31",
+      "feePct": 1,
+      "eventBlock": 89918702
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0xC1656C66036B5106D3c9ce0cf76BeD3344C19e18",
+      "feePct": 1,
+      "eventBlock": 89918964
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0xD36355cB175F0097F5E424CAFe8e05434C56182D",
+      "feePct": 1,
+      "eventBlock": 89919196
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0xa8fa9ed5CBe718Cd0D28b5B466D4C8deD17B1382",
+      "feePct": 1,
+      "eventBlock": 89919365
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0x8aE98c9017Ef3914388220ecFd9B7C950B05F119",
+      "feePct": 1,
+      "eventBlock": 89919608
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0x74F0455991d8Eb238432a4B480d12496Dc5d56f0",
+      "feePct": 1,
+      "eventBlock": 90164572
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0x82f5C649b27eBD3d22F52AB9EDAF4FdF5e8139Dd",
+      "feePct": 1,
+      "eventBlock": 90199260
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0x9e2dc98C5137ea554eF869bc2591089264b1ed17",
+      "feePct": 0.01,
+      "eventBlock": 90579546
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0x89331bDc6A74F7fBBeBCEa1aC02326aFd9817ADB",
+      "feePct": 1,
+      "eventBlock": 90607543
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0x31FEe62e722cf501785129E8f4b1Ff06C2c9811e",
+      "feePct": 1,
+      "eventBlock": 90607964
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0xB4253E3b17aB609D3f5F6790471CAeF49A1002A5",
+      "feePct": 1,
+      "eventBlock": 90608841
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0xa7be229406FBB4c454a306b9ac9865d7291E83BF",
+      "feePct": 1,
+      "eventBlock": 90608984
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0x69748d83cA80dC59b045BF59E5C05cdcEAE9c355",
+      "feePct": 1,
+      "eventBlock": 90609742
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0x4A6a859FE4a4E03A8D3b270D62c421fd062beE9F",
+      "feePct": 1,
+      "eventBlock": 90611563
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0x121F3Aa55c67837b371AC18182C544A1A714c5aF",
+      "feePct": 1,
+      "eventBlock": 90612379
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0x7b947fF2B6bcD1a160472B604E660a2d7Cc0E3F4",
+      "feePct": 1,
+      "eventBlock": 90613669
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0xd1Dcb97A5996b5aa659c2367B3BEE61f1701f112",
+      "feePct": 1,
+      "eventBlock": 90614736
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0x57Df88ad6D460Eb3e7f1Ff6704B4635c3DF8E6C5",
+      "feePct": 1,
+      "eventBlock": 90616528
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0xa63be59c755F440459Bf5E9818dE0CDf37DCF813",
+      "feePct": 1,
+      "eventBlock": 90688160
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0xEE982b3ddb9FB3313C4F218BFaeC6704A0eEA2BD",
+      "feePct": 1,
+      "eventBlock": 90774644
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0xA21e2E3f33b72b67C7a0aB7173935Dded90cEcE7",
+      "feePct": 1,
+      "eventBlock": 91148891
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0x66C0C2b8D014BaFCC24F6E0cc6FD62d0751BA257",
+      "feePct": 1,
+      "eventBlock": 91271771
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0x5906304A0D674A64E497369729f2cD711B59edB5",
+      "feePct": 1,
+      "eventBlock": 91303888
     }
   ]
 }
