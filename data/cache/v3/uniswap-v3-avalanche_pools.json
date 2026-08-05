@@ -1,8 +1,8 @@
 {
   "dexId": "uniswap-v3-avalanche",
-  "lastIndexedBlock": 91354059,
-  "latestBlockAtRun": 91989078,
-  "fullyIndexed": false,
+  "lastIndexedBlock": 92070831,
+  "latestBlockAtRun": 92070831,
+  "fullyIndexed": true,
   "pools": [
     {
       "dexId": "uniswap-v3-avalanche",
@@ -640,6 +640,27 @@
       "poolAddress": "0x5906304A0D674A64E497369729f2cD711B59edB5",
       "feePct": 1,
       "eventBlock": 91303888
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0xce876Ac86E818F8e92ddf422829Dec671a7e7d55",
+      "feePct": 1,
+      "eventBlock": 91370622
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0xCE3bE7c4c9792D796d89E9A0F121ebE1545c0CB3",
+      "feePct": 1,
+      "eventBlock": 91611257
+    },
+    {
+      "dexId": "uniswap-v3-avalanche",
+      "protocolType": "uniswap_v3",
+      "poolAddress": "0x1d1d537C0e2cBE642Ab4925dC9a9F7378f01Ff96",
+      "feePct": 1,
+      "eventBlock": 92031222
     }
   ]
 }
